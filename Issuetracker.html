@@ -1,0 +1,892 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>CX/PX Issues & Requirements Tracker</title>
+<link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@300;400;500;600;700&family=Instrument+Serif:ital@0;1&display=swap" rel="stylesheet">
+<style>
+  :root {
+    --bg: #f7f8fa;
+    --bg2: #f0f2f5;
+    --surface: #ffffff;
+    --surface2: #f7f8fa;
+    --border: #e4e7ed;
+    --border2: #d0d5de;
+    --accent: #1d4ed8;
+    --accent-lt: #eff4ff;
+    --accent-mid: #bfcfff;
+    --green: #0d7a5f;
+    --green-lt: #edfaf5;
+    --amber: #b45309;
+    --amber-lt: #fef9ec;
+    --red: #c1270d;
+    --red-lt: #fef2f0;
+    --purple: #5b21b6;
+    --purple-lt: #f3f0ff;
+    --text: #111827;
+    --text2: #4b5563;
+    --text3: #9ca3af;
+    --text4: #c9cfd8;
+    --shadow-sm: 0 1px 3px rgba(0,0,0,0.06), 0 1px 2px rgba(0,0,0,0.04);
+    --shadow: 0 4px 12px rgba(0,0,0,0.07), 0 1px 3px rgba(0,0,0,0.05);
+    --shadow-lg: 0 12px 40px rgba(0,0,0,0.12);
+    --radius: 10px;
+    --radius-lg: 14px;
+  }
+
+  *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+  html { scroll-behavior: smooth; }
+  body {
+    font-family: 'Plus Jakarta Sans', sans-serif;
+    background: var(--bg);
+    color: var(--text);
+    min-height: 100vh;
+    font-size: 13.5px;
+    line-height: 1.6;
+    -webkit-font-smoothing: antialiased;
+  }
+
+  /* NAV */
+  nav {
+    position: sticky; top: 0; z-index: 100;
+    background: rgba(255,255,255,0.95);
+    backdrop-filter: blur(12px);
+    border-bottom: 1px solid var(--border);
+    padding: 0 2rem;
+    display: flex; align-items: center; gap: 1.5rem;
+    height: 56px;
+    box-shadow: var(--shadow-sm);
+  }
+  .nav-logo {
+    font-family: 'Plus Jakarta Sans', sans-serif;
+    font-weight: 700;
+    font-size: 1rem;
+    color: var(--text);
+    white-space: nowrap;
+    display: flex; align-items: center; gap: 0.5rem;
+  }
+  .nav-logo-icon {
+    width: 28px; height: 28px;
+    background: var(--accent);
+    border-radius: 7px;
+    display: flex; align-items: center; justify-content: center;
+    color: white; font-size: 0.75rem; font-weight: 700;
+  }
+  .nav-divider { width: 1px; height: 20px; background: var(--border); }
+  .nav-pills { display: flex; gap: 0.15rem; margin-left: auto; }
+  .nav-pill {
+    padding: 0.4rem 0.85rem;
+    border-radius: 7px;
+    font-size: 0.8rem;
+    font-weight: 500;
+    cursor: pointer;
+    border: none;
+    background: transparent;
+    color: var(--text2);
+    transition: all 0.15s;
+    font-family: inherit;
+  }
+  .nav-pill:hover { background: var(--bg2); color: var(--text); }
+  .nav-pill.active { background: var(--accent-lt); color: var(--accent); font-weight: 600; }
+
+  /* HEADER BAND */
+  .header-band {
+    background: var(--surface);
+    border-bottom: 1px solid var(--border);
+    padding: 2.5rem 2rem 2rem;
+  }
+  .header-inner { max-width: 1360px; margin: 0 auto; }
+  .breadcrumb {
+    font-size: 0.72rem;
+    color: var(--text3);
+    font-weight: 500;
+    letter-spacing: 0.04em;
+    text-transform: uppercase;
+    margin-bottom: 0.6rem;
+    display: flex; align-items: center; gap: 0.4rem;
+  }
+  .breadcrumb span { color: var(--text2); }
+  h1 {
+    font-family: 'Instrument Serif', serif;
+    font-weight: 400;
+    font-size: clamp(1.7rem, 3vw, 2.4rem);
+    line-height: 1.2;
+    color: var(--text);
+    margin-bottom: 0.5rem;
+    letter-spacing: -0.01em;
+  }
+  h1 em { font-style: italic; color: var(--accent); }
+  .header-sub {
+    color: var(--text2);
+    font-size: 0.88rem;
+    max-width: 600px;
+    font-weight: 400;
+  }
+  .header-sub strong { font-weight: 600; color: var(--text); }
+
+  /* STAT CARDS */
+  .stats-band {
+    background: var(--surface);
+    border-bottom: 1px solid var(--border);
+  }
+  .stats-inner { max-width: 1360px; margin: 0 auto; padding: 0 2rem; }
+  .stats-grid {
+    display: grid;
+    grid-template-columns: repeat(8, 1fr);
+    gap: 0;
+  }
+  @media(max-width:900px) { .stats-grid { grid-template-columns: repeat(4,1fr); } }
+  @media(max-width:500px) { .stats-grid { grid-template-columns: repeat(2,1fr); } }
+  .stat-card {
+    padding: 1.25rem 1.5rem;
+    border-right: 1px solid var(--border);
+    position: relative;
+    transition: background 0.15s;
+  }
+  .stat-card:last-child { border-right: none; }
+  .stat-card:hover { background: var(--bg2); }
+  .stat-card::before {
+    content: '';
+    position: absolute; bottom: 0; left: 1.5rem; right: 1.5rem; height: 2px;
+    background: var(--card-accent, var(--accent));
+    opacity: 0;
+    transition: opacity 0.15s;
+  }
+  .stat-card:hover::before { opacity: 1; }
+  .stat-num {
+    font-family: 'Plus Jakarta Sans', sans-serif;
+    font-weight: 700;
+    font-size: 1.65rem;
+    line-height: 1;
+    color: var(--text);
+    margin-bottom: 0.3rem;
+  }
+  .stat-label { font-size: 0.7rem; color: var(--text3); font-weight: 500; text-transform: uppercase; letter-spacing: 0.05em; }
+  .stat-delta { font-size: 0.72rem; font-weight: 600; margin-top: 0.2rem; }
+
+  /* MAIN LAYOUT */
+  .main { max-width: 1360px; margin: 0 auto; padding: 1.75rem 2rem 4rem; }
+
+  /* TABS */
+  .tabs-bar {
+    display: flex; gap: 0; margin-bottom: 1.75rem;
+    border-bottom: 1px solid var(--border);
+  }
+  .tab {
+    padding: 0.7rem 1.25rem;
+    font-size: 0.82rem;
+    font-weight: 500;
+    cursor: pointer;
+    border-bottom: 2px solid transparent;
+    margin-bottom: -1px;
+    color: var(--text2);
+    transition: all 0.15s;
+    background: none;
+    border-top: none; border-left: none; border-right: none;
+    font-family: inherit;
+    display: flex; align-items: center; gap: 0.45rem;
+  }
+  .tab:hover { color: var(--text); }
+  .tab.active { color: var(--accent); border-bottom-color: var(--accent); font-weight: 600; }
+  .tab-count {
+    background: var(--bg2);
+    border: 1px solid var(--border);
+    color: var(--text2);
+    font-size: 0.68rem;
+    font-weight: 600;
+    padding: 0.1rem 0.45rem;
+    border-radius: 100px;
+    line-height: 1.4;
+  }
+  .tab.active .tab-count { background: var(--accent-lt); color: var(--accent); border-color: var(--accent-mid); }
+
+  .page { display: none; }
+  .page.active { display: block; animation: fadeIn 0.2s ease; }
+  @keyframes fadeIn { from{opacity:0;transform:translateY(6px)} to{opacity:1;transform:translateY(0)} }
+
+  /* SECTION */
+  .section-header {
+    font-size: 0.72rem;
+    font-weight: 700;
+    text-transform: uppercase;
+    letter-spacing: 0.08em;
+    color: var(--text3);
+    margin-bottom: 0.85rem;
+    display: flex; align-items: center; gap: 0.75rem;
+  }
+  .section-header::after { content:''; flex:1; height:1px; background:var(--border); }
+
+  /* OVERVIEW GRID */
+  .overview-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 1.25rem; margin-bottom: 1.25rem; }
+  .overview-grid.three { grid-template-columns: 1fr 1fr 1fr; }
+  .overview-wide { grid-column: 1 / -1; }
+  @media(max-width:760px) { .overview-grid, .overview-grid.three { grid-template-columns: 1fr; } }
+
+  /* CARD */
+  .card {
+    background: var(--surface);
+    border: 1px solid var(--border);
+    border-radius: var(--radius-lg);
+    padding: 1.4rem 1.5rem;
+    box-shadow: var(--shadow-sm);
+  }
+  .card-title {
+    font-size: 0.72rem;
+    font-weight: 700;
+    text-transform: uppercase;
+    letter-spacing: 0.07em;
+    color: var(--text3);
+    margin-bottom: 1.1rem;
+    display: flex; align-items: center; justify-content: space-between;
+  }
+
+  /* DONUT */
+  .donut-wrap { display: flex; align-items: center; gap: 2rem; }
+  .donut-legend { display: flex; flex-direction: column; gap: 0.85rem; flex: 1; }
+  .legend-item { display: flex; align-items: center; gap: 0.6rem; font-size: 0.8rem; }
+  .legend-dot { width: 9px; height: 9px; border-radius: 2px; flex-shrink: 0; }
+  .legend-label { color: var(--text2); flex: 1; }
+  .legend-val { font-weight: 700; color: var(--text); }
+  .legend-pct { font-size: 0.72rem; color: var(--text3); margin-left: 0.25rem; }
+
+  /* BAR CHART */
+  .bar-row {
+    display: flex; align-items: center; gap: 0.75rem;
+    margin-bottom: 0.55rem; cursor: pointer; padding: 0.2rem 0;
+    border-radius: 6px; transition: background 0.1s;
+  }
+  .bar-row:hover { background: var(--bg2); }
+  .bar-label { width: 140px; font-size: 0.78rem; color: var(--text2); white-space: nowrap; overflow: hidden; text-overflow: ellipsis; flex-shrink: 0; padding: 0 0.4rem; }
+  .bar-track { flex: 1; height: 6px; background: var(--bg2); border-radius: 3px; overflow: hidden; border: 1px solid var(--border); }
+  .bar-fill { height: 100%; border-radius: 3px; transition: width 0.7s cubic-bezier(0.22,1,0.36,1); }
+  .bar-val { width: 26px; font-size: 0.75rem; font-weight: 700; color: var(--text); text-align: right; flex-shrink: 0; }
+
+  /* FILTERS */
+  .filters-bar {
+    background: var(--surface);
+    border: 1px solid var(--border);
+    border-radius: var(--radius);
+    padding: 0.9rem 1.1rem;
+    margin-bottom: 1rem;
+    display: flex; flex-wrap: wrap; gap: 0.6rem; align-items: center;
+    box-shadow: var(--shadow-sm);
+  }
+  .filter-pill-label { font-size: 0.7rem; font-weight: 600; text-transform: uppercase; letter-spacing: 0.06em; color: var(--text3); }
+  select {
+    background: var(--surface);
+    border: 1px solid var(--border2);
+    color: var(--text);
+    border-radius: 7px;
+    padding: 0.38rem 0.75rem;
+    font-size: 0.8rem;
+    font-family: inherit;
+    cursor: pointer;
+    outline: none;
+    transition: border-color 0.15s, box-shadow 0.15s;
+    box-shadow: var(--shadow-sm);
+  }
+  select:focus { border-color: var(--accent); box-shadow: 0 0 0 3px rgba(29,78,216,0.1); }
+  .search-wrap { flex: 1; min-width: 220px; position: relative; }
+  .search-icon { position: absolute; left: 0.75rem; top: 50%; transform: translateY(-50%); color: var(--text3); font-size: 0.8rem; pointer-events: none; }
+  .search-box {
+    width: 100%;
+    background: var(--surface);
+    border: 1px solid var(--border2);
+    color: var(--text);
+    border-radius: 7px;
+    padding: 0.38rem 0.75rem 0.38rem 2.2rem;
+    font-size: 0.82rem;
+    font-family: inherit;
+    outline: none;
+    transition: border-color 0.15s, box-shadow 0.15s;
+    box-shadow: var(--shadow-sm);
+  }
+  .search-box:focus { border-color: var(--accent); box-shadow: 0 0 0 3px rgba(29,78,216,0.1); }
+  .search-box::placeholder { color: var(--text4); }
+  .results-info {
+    font-size: 0.78rem; color: var(--text3); margin-bottom: 0.75rem;
+    display: flex; align-items: center; gap: 0.4rem;
+  }
+  .results-info strong { color: var(--text); font-weight: 600; }
+
+  /* TABLE */
+  .table-card {
+    background: var(--surface);
+    border: 1px solid var(--border);
+    border-radius: var(--radius-lg);
+    overflow: hidden;
+    box-shadow: var(--shadow-sm);
+  }
+  .table-inner { overflow-x: auto; max-height: 580px; overflow-y: auto; }
+  table { width: 100%; border-collapse: collapse; }
+  thead th {
+    background: var(--bg2);
+    padding: 0.65rem 1.1rem;
+    text-align: left;
+    font-size: 0.7rem;
+    font-weight: 700;
+    text-transform: uppercase;
+    letter-spacing: 0.07em;
+    color: var(--text3);
+    white-space: nowrap;
+    position: sticky; top: 0; z-index: 1;
+    border-bottom: 1px solid var(--border);
+    cursor: pointer;
+    user-select: none;
+    transition: color 0.1s;
+  }
+  thead th:hover { color: var(--text); }
+  thead th.sorted { color: var(--accent); }
+  .sort-icon { margin-left: 3px; opacity: 0.4; font-size: 0.65rem; }
+  thead th.sorted .sort-icon { opacity: 1; }
+  tbody tr {
+    border-bottom: 1px solid var(--border);
+    transition: background 0.1s;
+    cursor: pointer;
+  }
+  tbody tr:last-child { border-bottom: none; }
+  tbody tr:hover { background: #f5f7ff; }
+  td {
+    padding: 0.7rem 1.1rem;
+    font-size: 0.8rem;
+    color: var(--text2);
+    vertical-align: middle;
+  }
+  td.id-cell { color: var(--text3); font-size: 0.7rem; font-weight: 600; font-variant-numeric: tabular-nums; width: 44px; }
+  td.client-cell { font-weight: 600; color: var(--text); font-size: 0.82rem; }
+  td.issue-cell { max-width: 240px; color: var(--text2); }
+
+  /* BADGES */
+  .badge {
+    display: inline-flex; align-items: center; gap: 0.3rem;
+    padding: 0.18rem 0.55rem;
+    border-radius: 4px;
+    font-size: 0.68rem;
+    font-weight: 600;
+    white-space: nowrap;
+    border: 1px solid transparent;
+  }
+  .badge-dot { width: 5px; height: 5px; border-radius: 50%; }
+  .badge-resolved { background: var(--green-lt); color: var(--green); border-color: #bbf0e0; }
+  .badge-pending { background: var(--amber-lt); color: var(--amber); border-color: #fde68a; }
+  .badge-dev { background: var(--accent-lt); color: var(--accent); border-color: var(--accent-mid); }
+  .badge-report { background: var(--purple-lt); color: var(--purple); border-color: #d8b4fe; }
+  .badge-recurring { background: var(--red-lt); color: var(--red); border-color: #fecaca; font-size: 0.66rem; }
+
+  /* MODAL */
+  .modal-overlay {
+    display: none; position: fixed; inset: 0; z-index: 200;
+    background: rgba(17,24,39,0.4);
+    backdrop-filter: blur(3px);
+    padding: 2rem; overflow-y: auto;
+    align-items: flex-start; justify-content: center;
+  }
+  .modal-overlay.open { display: flex; }
+  .modal {
+    background: var(--surface);
+    border: 1px solid var(--border);
+    border-radius: var(--radius-lg);
+    padding: 2rem;
+    max-width: 640px; width: 100%;
+    margin: auto;
+    box-shadow: var(--shadow-lg);
+    animation: modalIn 0.2s ease;
+    position: relative;
+  }
+  @keyframes modalIn { from{opacity:0;transform:translateY(12px) scale(0.98)} to{opacity:1;transform:translateY(0) scale(1)} }
+  .modal-close {
+    position: absolute; top: 1.1rem; right: 1.1rem;
+    width: 30px; height: 30px;
+    background: var(--bg2); border: 1px solid var(--border);
+    border-radius: 6px; color: var(--text2);
+    font-size: 0.85rem; cursor: pointer;
+    display: flex; align-items: center; justify-content: center;
+    transition: all 0.15s; line-height: 1; font-family: inherit;
+  }
+  .modal-close:hover { background: var(--red-lt); color: var(--red); border-color: #fecaca; }
+  .modal-eyebrow { font-size: 0.7rem; color: var(--text3); font-weight: 600; text-transform: uppercase; letter-spacing: 0.06em; margin-bottom: 0.4rem; }
+  .modal-title { font-family: 'Instrument Serif', serif; font-size: 1.3rem; font-weight: 400; color: var(--text); margin-bottom: 1rem; line-height: 1.4; }
+  .modal-badges { display: flex; flex-wrap: wrap; gap: 0.35rem; margin-bottom: 1.25rem; }
+  .modal-meta {
+    display: grid; grid-template-columns: 1fr 1fr; gap: 0.65rem;
+    margin-bottom: 1.25rem;
+    background: var(--bg2); border-radius: 8px; padding: 0.9rem 1rem;
+    border: 1px solid var(--border);
+  }
+  .meta-field label { font-size: 0.67rem; font-weight: 700; text-transform: uppercase; letter-spacing: 0.07em; color: var(--text3); display: block; margin-bottom: 0.15rem; }
+  .meta-field p { font-size: 0.82rem; color: var(--text); font-weight: 500; }
+  .detail-block { margin-bottom: 1rem; }
+  .detail-block label { font-size: 0.67rem; font-weight: 700; text-transform: uppercase; letter-spacing: 0.07em; color: var(--text3); display: block; margin-bottom: 0.4rem; }
+  .detail-block p {
+    font-size: 0.82rem; color: var(--text2); line-height: 1.75;
+    background: var(--bg); border-radius: 7px; padding: 0.85rem 1rem;
+    border: 1px solid var(--border);
+  }
+  .jira-btn {
+    display: inline-flex; align-items: center; gap: 0.4rem;
+    background: var(--accent-lt); color: var(--accent);
+    border: 1px solid var(--accent-mid);
+    border-radius: 6px; padding: 0.4rem 0.85rem;
+    font-size: 0.78rem; font-weight: 600; font-family: inherit;
+    text-decoration: none; transition: all 0.15s; cursor: pointer;
+  }
+  .jira-btn:hover { background: var(--accent); color: white; border-color: var(--accent); }
+
+  /* CLIENT CARDS */
+  .client-grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(380px, 1fr)); gap: 1rem; }
+  @media(max-width:600px){ .client-grid { grid-template-columns: 1fr; } }
+  .client-card {
+    background: var(--surface);
+    border: 1px solid var(--border);
+    border-radius: var(--radius);
+    padding: 1.1rem 1.25rem;
+    cursor: pointer; transition: all 0.15s;
+    box-shadow: var(--shadow-sm);
+  }
+  .client-card:hover { border-color: var(--accent); box-shadow: 0 0 0 3px rgba(29,78,216,0.06), var(--shadow); transform: translateY(-1px); }
+  .client-name { font-weight: 700; font-size: 0.9rem; color: var(--text); margin-bottom: 0.2rem; }
+  .client-team { font-size: 0.72rem; color: var(--text3); margin-bottom: 0.8rem; }
+  .client-stats { display: flex; gap: 1rem; margin-bottom: 0.75rem; }
+  .c-stat { text-align: center; }
+  .c-stat-num { font-weight: 700; font-size: 1.05rem; color: var(--text); line-height: 1; }
+  .c-stat-lbl { font-size: 0.65rem; color: var(--text3); text-transform: uppercase; letter-spacing: 0.04em; margin-top: 0.15rem; }
+  .progress-bar-bg { height: 4px; background: var(--bg2); border-radius: 2px; overflow: hidden; border: 1px solid var(--border); }
+  .progress-bar-fill { height: 100%; border-radius: 2px; transition: width 0.5s ease; }
+
+  /* EMPTY */
+  .empty-state { text-align: center; padding: 3.5rem 2rem; color: var(--text3); }
+  .empty-state p { font-size: 0.88rem; margin-top: 0.75rem; }
+
+  /* FOOTER */
+  footer {
+    border-top: 1px solid var(--border);
+    padding: 1.5rem 2rem;
+    text-align: center;
+    font-size: 0.75rem;
+    color: var(--text3);
+    background: var(--surface);
+  }
+</style>
+</head>
+<body>
+
+<!-- NAV -->
+<nav>
+  <div class="nav-logo">
+    <div class="nav-logo-icon">CX</div>
+    CX / PX Tracker
+  </div>
+  <div class="nav-divider"></div>
+  <div class="nav-pills">
+    <button class="nav-pill active" onclick="switchTab('overview')">Overview</button>
+    <button class="nav-pill" onclick="switchTab('issues')">Issues Log</button>
+    <button class="nav-pill" onclick="switchTab('clients')">By Client</button>
+  </div>
+</nav>
+
+<!-- HEADER -->
+<div class="header-band">
+  <div class="header-inner">
+    <div class="breadcrumb">CX &amp; PX Teams <span>/ Issues &amp; Requirements</span></div>
+    <h1>Issues &amp; Requirements <em>Dashboard</em></h1>
+    <p class="header-sub">Centralised tracker for all client-reported issues and requirements across <strong id="clientCountHero">86 clients</strong>. 242 records tracked from 2023 to present.</p>
+  </div>
+</div>
+
+<!-- STAT BAND -->
+<div class="stats-band">
+  <div class="stats-inner">
+    <div class="stats-grid" id="statsGrid"></div>
+  </div>
+</div>
+
+<!-- MAIN -->
+<div class="main">
+  <div class="tabs-bar">
+    <button class="tab active" onclick="switchTab('overview')">
+      Overview
+    </button>
+    <button class="tab" onclick="switchTab('issues')">
+      Issues Log
+      <span class="tab-count" id="issueTabCount">242</span>
+    </button>
+    <button class="tab" onclick="switchTab('clients')">
+      By Client
+      <span class="tab-count">86</span>
+    </button>
+  </div>
+
+  <!-- OVERVIEW -->
+  <div id="tab-overview" class="page active">
+
+    <div class="overview-grid">
+      <div class="card">
+        <div class="card-title">Resolution Status</div>
+        <div class="donut-wrap">
+          <svg viewBox="0 0 130 130" width="130" height="130" id="donutSvg" style="flex-shrink:0"></svg>
+          <div class="donut-legend" id="donutLegend"></div>
+        </div>
+      </div>
+      <div class="card">
+        <div class="card-title">Issue Type</div>
+        <div id="typeChart"></div>
+      </div>
+    </div>
+
+    <div class="overview-grid">
+      <div class="card">
+        <div class="card-title">Team Distribution</div>
+        <div id="teamChart"></div>
+      </div>
+      <div class="card">
+        <div class="card-title">Top 10 Clients by Volume</div>
+        <div id="clientChart"></div>
+      </div>
+    </div>
+
+    <div class="card" style="margin-bottom:1.25rem">
+      <div class="card-title">Top 15 Related Topics &amp; Areas</div>
+      <div id="relatedChart"></div>
+    </div>
+
+  </div>
+
+  <!-- ISSUES LOG -->
+  <div id="tab-issues" class="page">
+    <div class="filters-bar">
+      <div class="search-wrap">
+        <span class="search-icon">🔍</span>
+        <input type="text" class="search-box" id="searchBox" placeholder="Search by client, issue, topic, detail…" oninput="applyFilters()">
+      </div>
+      <span class="filter-pill-label">Status</span>
+      <select id="filterStatus" onchange="applyFilters()">
+        <option value="">All Statuses</option>
+        <option value="Resolved">Resolved</option>
+        <option value="Pending">Pending</option>
+      </select>
+      <span class="filter-pill-label">Type</span>
+      <select id="filterType" onchange="applyFilters()">
+        <option value="">All Types</option>
+        <option value="Development Issue">Development</option>
+        <option value="Reports Issue">Reports</option>
+      </select>
+      <span class="filter-pill-label">Team</span>
+      <select id="filterTeam" onchange="applyFilters()">
+        <option value="">All Teams</option>
+        <option value="India">India</option>
+        <option value="North America">North America</option>
+      </select>
+      <span class="filter-pill-label">Recurring</span>
+      <select id="filterRecurring" onchange="applyFilters()">
+        <option value="">All</option>
+        <option value="Yes">Recurring Only</option>
+      </select>
+    </div>
+    <div class="results-info" id="resultsCount"></div>
+    <div class="table-card">
+      <div class="table-inner">
+        <table>
+          <thead>
+            <tr>
+              <th onclick="sortTable('id')">ID <span class="sort-icon">↕</span></th>
+              <th onclick="sortTable('client')">Client <span class="sort-icon">↕</span></th>
+              <th onclick="sortTable('team')">Team <span class="sort-icon">↕</span></th>
+              <th onclick="sortTable('issueType')">Type <span class="sort-icon">↕</span></th>
+              <th>Issue / Topic</th>
+              <th onclick="sortTable('status')">Status <span class="sort-icon">↕</span></th>
+              <th>Recurring</th>
+            </tr>
+          </thead>
+          <tbody id="issuesTbody"></tbody>
+        </table>
+      </div>
+    </div>
+  </div>
+
+  <!-- BY CLIENT -->
+  <div id="tab-clients" class="page">
+    <div class="filters-bar">
+      <div class="search-wrap">
+        <span class="search-icon">🔍</span>
+        <input type="text" class="search-box" id="clientSearch" placeholder="Search client name…" oninput="renderClientList()">
+      </div>
+    </div>
+    <div id="clientList" class="client-grid"></div>
+  </div>
+
+</div>
+
+<!-- MODAL -->
+<div class="modal-overlay" id="modalOverlay" onclick="closeModal(event)">
+  <div class="modal" id="modalContent">
+    <button class="modal-close" onclick="closeModal(null)">✕</button>
+    <div id="modalBody"></div>
+  </div>
+</div>
+
+<footer>
+  CX / PX Issues &amp; Requirements Tracker &nbsp;·&nbsp; Last updated June 2026 &nbsp;·&nbsp; 242 records · 86 clients
+</footer>
+
+<script>
+const DATA = [{"id":1,"client":"Bosch BGSW","team":"","issueType":"Development Issue","issue":"Employee details","detail":"The logic implemented for Bosch, which automatically deactivates users if their details are not present in the current file, is not functioning as intended due to the shared file names being identical. This issue is concerning as it adversely affects user experience by triggering incorrect emails for exited users.","status":"Resolved","rawStatus":"Resolved","recurring":"","reportedDate":"","resolutionDate":"","jiraLink":"","relatedTo":"Data sharing","assignedTo":""},{"id":2,"client":"ACG","team":"","issueType":"Development Issue","issue":"Marriage/Birthday/Work Anniversary Points","detail":"Points not gettting triggered automatically","status":"Resolved","rawStatus":"Resolved","recurring":"Yes","reportedDate":"","resolutionDate":"","jiraLink":"","relatedTo":"","assignedTo":""},{"id":3,"client":"LPL Financial","team":"North America","issueType":"Development Issue","issue":"Delay in receiving OTP for CSV points upload","detail":"Client POC's are not getting OTP within specified time frame while uploading points via dashboard.","status":"Pending","rawStatus":"Pending in Client side","recurring":"Yes","reportedDate":"12th Dec'23","resolutionDate":"","jiraLink":"","relatedTo":"Delay in receiving OTP","assignedTo":""},{"id":4,"client":"Wipro","team":"","issueType":"Development Issue","issue":"Beta dashboard","detail":"Beta dashboard the is not working as expected.The team is consistantly facing issue every morning","status":"Resolved","rawStatus":"Resolved","recurring":"","reportedDate":"Feb'24","resolutionDate":"","jiraLink":"","relatedTo":"Beta dashboard","assignedTo":""},{"id":5,"client":"LTI Mindtree","team":"","issueType":"Development Issue","issue":"User details not present in database","detail":"The details of users are not successfully pushed to us via SFTP prpcess due to which user details does not reflect in our database.","status":"Resolved","rawStatus":"Resolved","recurring":"","reportedDate":"","resolutionDate":"","jiraLink":"","relatedTo":"SFTP","assignedTo":""},{"id":6,"client":"LTI Mindtree","team":"","issueType":"Development Issue","issue":"Points getting allocated to a different user","detail":"points are getting vanished from users wallet and has been observed that it has been allocated to a different user id.","status":"Resolved","rawStatus":"Resolved","recurring":"","reportedDate":"Jan'24","resolutionDate":"","jiraLink":"","relatedTo":"SFTP/CSV","assignedTo":""},{"id":7,"client":"Compex Legal","team":"North America","issueType":"Development Issue","issue":"Terminated Employee shown as active","detail":"We are experiencing issues with the API integration of Compex legal employee data. This problem typically occurs with deactivated or terminated employees.\u00a0Although Compex, who has ADP integration with us, claims to have deactivated the employee in their database, it appears this is not reflected in ours","status":"Resolved","rawStatus":"Resolved","recurring":"","reportedDate":"8th Mar 24","resolutionDate":"","jiraLink":"","relatedTo":"Terminated Employee shown as active","assignedTo":""},{"id":8,"client":"ITC Hotels","team":"","issueType":"Development Issue","issue":"Pending awards not visible","detail":"There are a few approvers who have not been able to approve the pending awards from 2023 as they are not visible under the To Do  list","status":"Resolved","rawStatus":"Resolved","recurring":"","reportedDate":"Jan'24","resolutionDate":"1st March 2024","jiraLink":"","relatedTo":"Front End","assignedTo":""},{"id":9,"client":"ITC Hotels","team":"","issueType":"Development Issue","issue":"Bonus Points Not Processed","detail":"We processed a CSV file on Oct 5, 2023 to credit bonus points to the eligible users. However, on investigation we found out that the file was never processed at the backend. Consequently, the points are showing as unregistered.","status":"Resolved","rawStatus":"Resolved","recurring":"","reportedDate":"1st Jan'24","resolutionDate":"1st March 2024","jiraLink":"","relatedTo":"Backend","assignedTo":""},{"id":10,"client":"Airtel","team":"","issueType":"Development Issue","issue":"Issue:-No approvers found while nominating for Airtel Star Award","detail":"We have checked and found that the Approver for Airtel Star Award category should be nominee's Business Head\nHere in this case, approver/Business Head for the mentioned nominee- mohit.sadhotra@airtel.com  is DTH.HO and the employee_id mapped under the same is 69644\nHowever as per database Employee ID-69644 is found to be inactive, hence the system is not able to find the approver during nomination...","status":"Resolved","rawStatus":"Resolved","recurring":"","reportedDate":"16th Jun'23","resolutionDate":"","jiraLink":"","relatedTo":"BU Mapping as per correct approver","assignedTo":""},{"id":11,"client":"Airtel","team":"","issueType":"Development Issue","issue":"CC Matrix","detail":"Concern-For appreciation emails, CC is disabled for Airtel.\nFindings: Previously, the default CC matrix mapping was configured for appreciation as per the nomination. However, the VC team suddenly changed this process and started disabling the CC matrix if there was any default configuration, without any prior notice or intimation.\nResolution- A reactive approach has been taken and CCmatrix has be...","status":"Resolved","rawStatus":"Resolved","recurring":"","reportedDate":"26th Dec'23","resolutionDate":"","jiraLink":"","relatedTo":"CC Matrix was not working for appreciation","assignedTo":""},{"id":12,"client":"Tata Motors Limited","team":"","issueType":"Development Issue","issue":"Workflow","detail":"Sanjoy Debnath/Backend Team","status":"Resolved","rawStatus":"Resolved","recurring":"","reportedDate":"13th Jul'23","resolutionDate":"","jiraLink":"","relatedTo":"Not able to add More than 50 Nominations for Platinum Award_Tata Motors Limited_443\nhttps://vantagecirclejira.atlassian.net/browse/VC-4281","assignedTo":""},{"id":13,"client":"Tata Motors Limited","team":"","issueType":"Development Issue","issue":"Report Accuracy & Real time status updation","detail":"Vishal/Somir/Gyan","status":"Resolved","rawStatus":"Resolved","recurring":"","reportedDate":"9th Dec'23","resolutionDate":"","jiraLink":"","relatedTo":"Multiple approver details were not getting updated in the award nomination report","assignedTo":""},{"id":14,"client":"Tata Motors Limited","team":"","issueType":"Development Issue","issue":"Report Accuracy & Real time status updation\nRe-occured","detail":"Vishal/Somir/Gyan","status":"Resolved","rawStatus":"Resolved","recurring":"","reportedDate":"18th Jan'24","resolutionDate":"","jiraLink":"","relatedTo":"Multiple approver details were not getting updated in the award nomination report","assignedTo":""},{"id":15,"client":"LTI Mindtree","team":"","issueType":"Development Issue","issue":"Login issue","detail":"Users were not able to login as their employee details were not captured correctly in the SSO table","status":"Resolved","rawStatus":"Resolved","recurring":"","reportedDate":"","resolutionDate":"","jiraLink":"","relatedTo":"SSO authentication","assignedTo":""},{"id":16,"client":"LTI Mindtree","team":"","issueType":"Development Issue","issue":"Points allocated in different location","detail":"The location of users are not correctly shared with us or users are shifted to different locations due to which users are unbale to view their points allocated in their wallet.","status":"Resolved","rawStatus":"Resolved","recurring":"","reportedDate":"","resolutionDate":"","jiraLink":"","relatedTo":"Data sharing with VC team","assignedTo":""},{"id":17,"client":"Tata Coffee","team":"","issueType":"Development Issue","issue":"Delegation role does not function properly","detail":"Users who have been given delegation role on behalf of other peers, doesnot allow them to nominate/approve awards","status":"Resolved","rawStatus":"Resolved","recurring":"","reportedDate":"May'23","resolutionDate":"","jiraLink":"","relatedTo":"Front end issue","assignedTo":""},{"id":18,"client":"Tata Communications Ltd","team":"","issueType":"Development Issue","issue":"Login issue","detail":"Users not able to login in the applause platform as their details are not registered with us due to GMC check etc.","status":"Resolved","rawStatus":"Resolved","recurring":"","reportedDate":"As and when received","resolutionDate":"","jiraLink":"","relatedTo":"Data sharing via HRIS API integration","assignedTo":""},{"id":19,"client":"Tata Communications Ltd","team":"","issueType":"Development Issue","issue":"GV issue","detail":"Users donot receive GV details","status":"Resolved","rawStatus":"Resolved","recurring":"","reportedDate":"As and when received","resolutionDate":"","jiraLink":"","relatedTo":"Gift vouchers","assignedTo":""},{"id":20,"client":"Tata Communications Ltd","team":"","issueType":"Development Issue","issue":"Manager Insight Report having incorrect data","detail":"Quaterly manager insight report sent to all the managers did not have the correct data.","status":"Resolved","rawStatus":"Resolved","recurring":"","reportedDate":"17th Jan'24","resolutionDate":"","jiraLink":"","relatedTo":"Report","assignedTo":""},{"id":21,"client":"Tata Communications Ltd","team":"","issueType":"Development Issue","issue":"Wrong manager details reflecting in platform","detail":"Users delta changed details do not get updated in the platform due to missing GMC check or data not getting pulled correctly by our system.","status":"Resolved","rawStatus":"Resolved","recurring":"","reportedDate":"As and when received","resolutionDate":"","jiraLink":"","relatedTo":"Data sharing via HRIS API integration","assignedTo":""},{"id":22,"client":"Icertis","team":"","issueType":"Development Issue","issue":"Terminated employees got work anniversary mail","detail":"The termination API schedule time has been changed to Monday at 8:00am IST and Gyan has made an automated mail that will be sent to me and him whenever there are full load and delta changes pushed through client API. That email will work as a counter check system.","status":"Resolved","rawStatus":"Resolved","recurring":"","reportedDate":"1st Jan'24","resolutionDate":"","jiraLink":"","relatedTo":"HRIS","assignedTo":""},{"id":23,"client":"ACG","team":"","issueType":"Development Issue","issue":"GV redemption text messages not getting delivered to employees","detail":"GV mailers were not getting delivered","status":"Resolved","rawStatus":"Resolved","recurring":"","reportedDate":"Jul'23","resolutionDate":"2023-07-12 00:00:00","jiraLink":"","relatedTo":"GV","assignedTo":""},{"id":24,"client":"Bluestar","team":"","issueType":"Development Issue","issue":"Issue","detail":"The employees are getting deactivated based on the Resignation date and not as per the Last Working Date","status":"Resolved","rawStatus":"Resolved","recurring":"","reportedDate":"10th Jan'24","resolutionDate":"","jiraLink":"","relatedTo":"API","assignedTo":""},{"id":25,"client":"Icertis","team":"","issueType":"Development Issue","issue":"WA automated mailers getting triggered to terminated users","detail":"Icertis has a termination API which provides the details of terminated users at their end. Those users are not getting updated at our end, API/servers seem to be failing. Due to an indexing error the users still show as Active and Work anniversary mailers get triggered to them.","status":"Resolved","rawStatus":"Resolved","recurring":"","reportedDate":"16th Feb'24","resolutionDate":"","jiraLink":"","relatedTo":"HRIS","assignedTo":""},{"id":26,"client":"ITC Hotels","team":"","issueType":"Development Issue","issue":"","detail":"We processed a CSV file on Oct 5, 2023 to credit bonus points to the eligible users. However, on investigation we found out that the file was never processed at the backend. Consequently, the points are showing as unregistered.","status":"Resolved","rawStatus":"Resolved","recurring":"","reportedDate":"1st Jan'24","resolutionDate":"","jiraLink":"","relatedTo":"Bonus Points Not Processed","assignedTo":""},{"id":27,"client":"Tata Motors Limited","team":"","issueType":"Development Issue","issue":"Issue with the award ID in the award nomination report","detail":"Different Award ID is getting populated in the award nomination report for the same team award","status":"Resolved","rawStatus":"Resolved","recurring":"Yes","reportedDate":"27th Feb'24","resolutionDate":"29-02-2024","jiraLink":"","relatedTo":"Report Inaccuracy","assignedTo":""},{"id":28,"client":"Wipro","team":"","issueType":"Development Issue","issue":"Points upload page becomes blank every morning.Data pointers are not correct sometimes and loading time is high.","detail":"","status":"Resolved","rawStatus":"Resolved","recurring":"","reportedDate":"","resolutionDate":"","jiraLink":"","relatedTo":"Beta Dashboard issue","assignedTo":""},{"id":29,"client":"HTC","team":"","issueType":"Development Issue","issue":"Faltering Question Wizard assignment","detail":"HTC has a question wizard active for awards and badges. If anyone edits the awards or badges configuration in the dashboard, the assigned question wizard fails. We have to go and reassign every time. Failure of this has resulted in a recurring scenario where nominators get the error \"No Awards Found\" while trying to nominate. The expectation here is question wizard and editing of awards are indepe...","status":"Resolved","rawStatus":"Resolved","recurring":"","reportedDate":"5th Feb'24","resolutionDate":"2024-06-03 00:00:00","jiraLink":"","relatedTo":"Work flow Configuration","assignedTo":""},{"id":30,"client":"Airtel","team":"","issueType":"Development Issue","issue":"The configuration states that the RM of the nominee should be in the CC of the appreciation email that the nominee receives. However, in this case, the nominator itself is the RM, they are not been ta...","detail":"Concern:- The configuration states that the RM of the nominee should be in the CC of the appreciation email that the nominee receives. However, in this case, the nominator itself is the RM, they are not been tagged in the appreciation email.\nUpdate awaited from the backend/tech ops","status":"Resolved","rawStatus":"Resolved","recurring":"","reportedDate":"14th mar'24","resolutionDate":"20/03/2024","jiraLink":"","relatedTo":"CC Matrix for Appreciation is not working as per the configuration","assignedTo":""},{"id":31,"client":"Tata Motors Limited","team":"","issueType":"Development Issue","issue":"We have received an escalation from Tata Motors wherein the feed posts are getting generated for award approval.\n\nThis should not have happened as the nomination window and to-do list had been closed ...","detail":"Concern:-Approvals has happened on 19th Mar'24 although we have already disabled the nomination tab, to-do list and processed a force logout on 15th Mar'24\nUpdate from Sanjoy Debnath-Upon querying the data we found that -\n\nswapnil.gosavi@tatamotors.com has approved 3 nominations and\nanurag.mehrotra@tatamotors.com has approved 1 nomination today.\n\nWhereas in the login response the approval permissi...","status":"Resolved","rawStatus":"Resolved","recurring":"","reportedDate":"19th Mar'24","resolutionDate":"","jiraLink":"","relatedTo":"Approvals has happened on 19th Mar'24 although we have already disabled the nomination tab, to do list and processed a force logout on 15th Mar'24","assignedTo":"Sanjoy/Subhendu"},{"id":32,"client":"Sidel","team":"North America","issueType":"Development Issue","issue":"Issue pending since 3 months _ Sidel\nThe redeemed gift vouchers are not reflecting in the Gift voucher history","detail":"","status":"Resolved","rawStatus":"Resolved","recurring":"","reportedDate":"31st Dec'24","resolutionDate":"2nd week of April","jiraLink":"","relatedTo":"GV","assignedTo":"Subhendu"},{"id":33,"client":"Wipro","team":"","issueType":"Development Issue","issue":"Users are able to share his comment on his SY before the publish date","detail":"Ideally users should be able to share the comment on SY and post the publication of the SY on his WA. However in this case user is able to provide the citation before that","status":"Resolved","rawStatus":"Resolved","recurring":"","reportedDate":"19th March","resolutionDate":"","jiraLink":"","relatedTo":"Service yearbook","assignedTo":"Subhendu / Preetisha"},{"id":34,"client":"Wipro","team":"","issueType":"Development Issue","issue":"An anonymous comment has been published on the user SY on the production site from dealspoint account. This issue has been highlighted to us on 27th March 2024. Ticket link - https://vantagecirclejira...","detail":"Issue 1 - Users were able to acknowledge/comment on peer's comments before the SY is published. This issue has been highlighted to us on 19th March 2024\nIssue 2 - An anonymous comment has been published on the user SY on the production site from dealspoint account. This issue has been highlighted to us on 27th March 2024","status":"Resolved","rawStatus":"Resolved","recurring":"","reportedDate":"","resolutionDate":"","jiraLink":"","relatedTo":"Service yearbook","assignedTo":""},{"id":35,"client":"Wipro","team":"","issueType":"Reports Issue","issue":"Employee points","detail":"As per wipro, we are still capturing the old dept details in the report.Sometime the 'department' column appears blank for some cases","status":"Pending","rawStatus":"Pending in Client side","recurring":"Yes","reportedDate":"Jul'23","resolutionDate":"","jiraLink":"","relatedTo":"Employee points report","assignedTo":"Subhendu"},{"id":36,"client":"Icertis","team":"","issueType":"Reports Issue","issue":"Budget Allocation report need country wallet view and overall revamp","detail":"Icertis had reported that when any budget holder exits the system, the visibility of how much amount was remaining with that user at that time and what went back to the source wallet(Company wallet) cannot be affirmed. The visibility of Country wallet is requested in Budget allocation repot","status":"Resolved","rawStatus":"Resolved","recurring":"Yes","reportedDate":"12th Aug'23","resolutionDate":"","jiraLink":"","relatedTo":"Budget Allocation report","assignedTo":"Subhendu"},{"id":37,"client":"HTC","team":"","issueType":"Reports Issue","issue":"Multiple level approver not working","detail":"2nd Level approver details not available in Award Nomination report. This is critical for HR's to monitor the status internally.","status":"Resolved","rawStatus":"Resolved","recurring":"Yes","reportedDate":"1st Nov'23","resolutionDate":"","jiraLink":"","relatedTo":"Award Nomination Report","assignedTo":"Subhendu & Somir"},{"id":38,"client":"LTI Mindtree","team":"","issueType":"Reports Issue","issue":"Points getting allocated to a different user which is why the redemption report is incorrect from Oct'23- Till date","detail":"points are getting vanished from the users wallet and has been observed that it has been allocated to a different user id. This is affecting the overall redemption report due to which we are not able to bill the client from Oct'23- Till date","status":"Resolved","rawStatus":"Resolved","recurring":"","reportedDate":"","resolutionDate":"","jiraLink":"","relatedTo":"Redemption Report","assignedTo":"Nihal"},{"id":39,"client":"Wipro","team":"","issueType":"Reports Issue","issue":"Missing data, blank column, wrong data","detail":"In the balance point report, most of the time we found wrong employee id, blank details.","status":"Resolved","rawStatus":"Resolved","recurring":"Yes","reportedDate":"","resolutionDate":"","jiraLink":"","relatedTo":"Balance point Report","assignedTo":"Somir"},{"id":40,"client":"Airtel","team":"","issueType":"Reports Issue","issue":"we have identified some discrepancies, including blank balance columns and a line item reflecting a negative balance","detail":"Concern:- the budget report that was shared with Airtel, covering the period from 28th Dec'23 to 12th Feb'24.\nUpon careful review, we have identified some discrepancies, including blank balance columns and a line item reflecting a negative balance. To address this issue promptly and ensure accurate communication with the client, we kindly request your assistance in investigating the root cause and...","status":"Resolved","rawStatus":"Resolved","recurring":"","reportedDate":"7th Mar'24","resolutionDate":"","jiraLink":"","relatedTo":"Budget Report-Blank & Negative balance","assignedTo":"Gyanankush, Somir  & Subhendu"},{"id":41,"client":"Wipro","team":"","issueType":"Reports Issue","issue":"Wrong employee id has been reflected on the report.Exited users ID has been reflected","detail":"Example: The users having same email id/name are facing this issue","status":"Pending","rawStatus":"Pending in Client side","recurring":"","reportedDate":"13th Mar'24","resolutionDate":"","jiraLink":"","relatedTo":"Employee points report","assignedTo":"Somir"},{"id":42,"client":"LPL Financial","team":"North America","issueType":"Reports Issue","issue":"Missing information in the master award report","detail":"Client has reported a concern wherein most of the information are missing in the master report. Example- Nominator details.","status":"Resolved","rawStatus":"Resolved","recurring":"Yes","reportedDate":"Jan'24","resolutionDate":"","jiraLink":"","relatedTo":"Missing Information","assignedTo":""},{"id":43,"client":"ITC Hotels","team":"","issueType":"Reports Issue","issue":"Award nomination report shows wrong data","detail":"Award nomination report shows a lot of awards pending although they were all CSV awards and were approved on the same day using a valid OTP","status":"Resolved","rawStatus":"Resolved","recurring":"Yes","reportedDate":"Dec'23","resolutionDate":"1st March 2024","jiraLink":"","relatedTo":"Award nomination report","assignedTo":"Subhendu"},{"id":44,"client":"Bluestar","team":"","issueType":"Reports Issue","issue":"Business Justification is found as blank","detail":"Business Justification is found as blank in the award nomination report for Blue Star Limited.\nJira Ticket no-VC-3877","status":"Resolved","rawStatus":"Resolved","recurring":"","reportedDate":"6th Jun'23","resolutionDate":"","jiraLink":"","relatedTo":"Award nomination report","assignedTo":""},{"id":45,"client":"Bluestar","team":"","issueType":"Reports Issue","issue":"The Employee Points report is showing a few blank data","detail":"The Employee Points report is showing a few blank data in columns like- Business Group, Division, Subdivision & Division","status":"Resolved","rawStatus":"Resolved","recurring":"","reportedDate":"10th Jan'24","resolutionDate":"","jiraLink":"","relatedTo":"Employee Points report","assignedTo":""},{"id":46,"client":"ACG","team":"","issueType":"Reports Issue","issue":"Brazil associate Aline Paula got rewarded in Indian Rupees","detail":"Aline received a Spot Silver award. However, she received 1000 VC points showing in Indian rupees","status":"Resolved","rawStatus":"Resolved","recurring":"","reportedDate":"28th Jun'23","resolutionDate":"","jiraLink":"","relatedTo":"Employee Points report","assignedTo":"Subhendu"},{"id":47,"client":"Zuventus","team":"","issueType":"Reports Issue","issue":"Misalignment and missing updates with columns for the Appreciation Report, Employee Points report & Award Nomination.","detail":"Misalignment of columns for the Appreciation Report, Employee Points report & Award Nomination report due to which we have faced major issues with Approval Role updates.\nEg: 1. For Award Nomination Report, if there is a 2 -level approval, and a particular award is approved in both levels in the dashboard, there is a pending status highlighted in the report for one of the approvers mostly in 2nd -l...","status":"Resolved","rawStatus":"Resolved","recurring":"Yes","reportedDate":"9th Jan'24","resolutionDate":"","jiraLink":"","relatedTo":"Award nomination report","assignedTo":"Vishal/Somir"},{"id":48,"client":"SIDEL","team":"North America","issueType":"Reports Issue","issue":"Blank Columns, Missing data, Country and City discrepancy","detail":"We're still awaiting resolution on the blank columns and missing data in the Appreciation and Nomination reports for Sidel. Despite our commitment to provide a solution at the earliest, we haven't been able to deliver.","status":"Resolved","rawStatus":"Resolved","recurring":"Yes","reportedDate":"","resolutionDate":"6th Mar'24","jiraLink":"","relatedTo":"Registration, Appreciation, Nomination Report","assignedTo":"Somir"},{"id":49,"client":"Bosch BGSW","team":"","issueType":"Reports Issue","issue":"Instead of employee ID, email id has been populated also the Value is not matching with source table","detail":"Instead of employee ID, email id has been populated also the Value is not matching with source table","status":"Resolved","rawStatus":"Resolved","recurring":"Yes","reportedDate":"18th mar'24","resolutionDate":"","jiraLink":"","relatedTo":"Redemption Report","assignedTo":"Nihal"},{"id":50,"client":"Amdocs Management Limited","team":"","issueType":"Reports Issue","issue":"1. In the redemption report the amount replicates wrongly due to the USD equivalent value in the system\n2. Deactivated users appearing in an encrypted format","detail":"1. In the redemption report, the amounts are incorrectly shown due to the USD equivalent value in the system. \n2. Deactivated users appearing in an encrypted format","status":"Resolved","rawStatus":"Resolved","recurring":"","reportedDate":"","resolutionDate":"","jiraLink":"","relatedTo":"Redemption Report","assignedTo":""},{"id":51,"client":"SRF Limited","team":"","issueType":"Reports Issue","issue":"Mismatch between the employee points report and the redemption report.\n\nCase 1 - Harish Chandra Pant\nID - 106030\nEmail - harishcp93@gmail.com\n\nPoints credited as per employee points report was 9100. P...","detail":"","status":"Resolved","rawStatus":"Resolved","recurring":"","reportedDate":"","resolutionDate":"","jiraLink":"","relatedTo":"Redemption Report","assignedTo":""},{"id":52,"client":"Wipro","team":"","issueType":"Development Issue","issue":"Users' point balances have turned negative.","detail":"The support team received 2 tickets related to this and below are the id's: elizabeth.gallup@wipro.com,naveen.n173@wipro.com. The team is currently validating the same.","status":"Resolved","rawStatus":"Resolved","recurring":"","reportedDate":"","resolutionDate":"","jiraLink":"","relatedTo":"User's point statement","assignedTo":""},{"id":53,"client":"Wipro","team":"","issueType":"Reports Issue","issue":"The LSA awards that were initially approved have now been declined after eight months.","detail":"The LSA awards that were initially approved have now been declined after eight months.","status":"Resolved","rawStatus":"Resolved","recurring":"","reportedDate":"","resolutionDate":"","jiraLink":"","relatedTo":"Employee points report","assignedTo":""},{"id":54,"client":"ITC Hotels","team":"","issueType":"Reports Issue","issue":"Award Nomination Report Data and To do list in the front end shows mismatch Data","detail":"The Award Nomination Report Data and To do list in the front end shows mismatch Data. This was because duplicate accounts were created for the same users in the database. The list of duplicate accounts has been shared with Somir today. He should be able to delete them all by tomorrow EOD.","status":"Resolved","rawStatus":"Resolved","recurring":"","reportedDate":"","resolutionDate":"","jiraLink":"","relatedTo":"Award Nomination Report Data and To do list in the front end shows mismatch Data","assignedTo":""},{"id":55,"client":"Factset","team":"","issueType":"Reports Issue","issue":"The redemption report shows no data, although it is in the auto-indexing","detail":"The redemption report shows no data, although it is in the auto-indexing. We need these data for invoicing purpose","status":"Resolved","rawStatus":"Resolved","recurring":"","reportedDate":"","resolutionDate":"","jiraLink":"","relatedTo":"The redemption report shows no data, although it is in the auto-indexing","assignedTo":""},{"id":56,"client":"Firstsource","team":"","issueType":"Reports Issue","issue":"","detail":"","status":"Resolved","rawStatus":"Resolved","recurring":"","reportedDate":"","resolutionDate":"","jiraLink":"","relatedTo":"Cash-back points are pending for more then 6 months now.","assignedTo":""},{"id":57,"client":"HTC Limited","team":"","issueType":"Reports Issue","issue":"HTC _award nomination report - second level approver details population","detail":"HTC has two level approval for all awards, the award nomination report should populate the details of second level approver in the report irrespective of the status of the award or whether the first level approver or super admin has approved/declined the award or not. The second level approver details should be present. This will help the HR PoC understand in which stage the nomination is stuck.","status":"Resolved","rawStatus":"Resolved","recurring":"","reportedDate":"","resolutionDate":"","jiraLink":"","relatedTo":"HTC _award nomination report - second level approver details population","assignedTo":""},{"id":58,"client":"SIDEL","team":"North America","issueType":"Development Issue","issue":"The platform occasionally fails to display user details during a search, but these details appear on the next search.","detail":"Concern:-Despite a first fix attempted on 29th Apr'24 and the Root Cause Analysis conducted, employees of Sidel are still unable to recognize or search for their colleagues on the platform.\nIssue reported again on 2nd May'24.\nThis is an ongoing issue with the user search functionality on Sidel's RnR platform.\n\nUpdate from Dev team on 6th May'24-Nibir has implemented some modifications and optimiza...","status":"Resolved","rawStatus":"Resolved","recurring":"Yes","reportedDate":"26th Apr'24\n2nd May'24","resolutionDate":"6th May'24","jiraLink":"","relatedTo":"Indexing Issue","assignedTo":""},{"id":59,"client":"Wipro","team":"","issueType":"Reports Issue","issue":"Giver dept is blank for 13 users whereas those were present in the source table.","detail":"","status":"Resolved","rawStatus":"Resolved","recurring":"","reportedDate":"","resolutionDate":"","jiraLink":"","relatedTo":"Appreciation Report","assignedTo":"somir"},{"id":60,"client":"Sidel","team":"North America","issueType":"Reports Issue","issue":"Concern:- The client had shared the missing data to be updated in the appreciation report on 29th Mar'24.","detail":"Update from VC Team- The required data has been updated and the information has been shared with the client on 29th Apr'24.\n\nUpdate from Sidel:-Issue reported again on 1st May'24 that there is a discrepancy and inaccuracies and the data has not been updated in the report as per the expectation.","status":"Resolved","rawStatus":"Resolved","recurring":"Yes","reportedDate":"29th Mar'24\n1st May'24","resolutionDate":"","jiraLink":"","relatedTo":"Appreciation Report","assignedTo":""},{"id":61,"client":"Sidel","team":"North America","issueType":"Development Issue","issue":"Despite a first fix attempted on 29th Apr'24 and the Root Cause Analysis conducted, employees of Sidel was still unable to recognize or search for their colleagues on the platform.","detail":"This was an ongoing issue with the user search functionality on Sidel's RnR platform, which was again reported on 2nd May'24. At that time, several users were not appearing in search results.\n This intermittent behaviour suggests a recurring instability in our search data, which alternates between functioning correctly and failing to meet expectations.","status":"Resolved","rawStatus":"Resolved","recurring":"Yes","reportedDate":"29th Apr'24\n2nd May'24","resolutionDate":"6th May'24","jiraLink":"","relatedTo":"User Search index not working","assignedTo":""},{"id":62,"client":"LTIM","team":"","issueType":"Development Issue","issue":"For a user whose LWD was on 30 April, the employee details were pushed by LTI via SFTP on 30th April but got updated in our system on 2nd May'24 due to which the user was able to redeem even after the...","detail":"For a user whose LWD was on 30 April, the employee details were pushed by LTI via SFTP on 30th April but got updated in our system on 2nd May'24 due to which the user was able to redeem even after the LWD.","status":"Resolved","rawStatus":"Resolved","recurring":"","reportedDate":"14th May'24","resolutionDate":"16th May'24","jiraLink":"","relatedTo":"Employee details not getting updated real time","assignedTo":""},{"id":63,"client":"Infosys","team":"","issueType":"Development Issue","issue":"Points Uploaded to Germany wallet getting credited to Greece wallet while uploading points through csv. User ID - Venkatadri_Badugu@infosys.com","detail":"Points Uploaded to Germany wallet getting credited to Greece wallet","status":"Resolved","rawStatus":"Resolved","recurring":"","reportedDate":"21st May'24","resolutionDate":"","jiraLink":"","relatedTo":"Points Uploaded to Germany wallet getting credited to Greece wallet","assignedTo":""},{"id":64,"client":"Wipro","team":"","issueType":"Development Issue","issue":"We created 5 new certificates from the beta dashboard using the new feature and mapped those certificates with the awards.However, the user received wrong certificates on their WA.","detail":"We created 5 new certificates from the beta dashboard using the new feature and mapped those certificates with the awards.However, the user received wrong certificates on their WA.","status":"Resolved","rawStatus":"Resolved","recurring":"","reportedDate":"","resolutionDate":"","jiraLink":"","relatedTo":"User received wrong LSA certificate for milestone completion","assignedTo":""},{"id":65,"client":"Amdocs Management Limited","team":"","issueType":"Reports Issue","issue":"users who redeem points apart from their local currency and USD, have observed a difference.","detail":"we have noticed discrepancies for users who redeem points in different currencies (e.g., EUR to GBP).","status":"Resolved","rawStatus":"Resolved","recurring":"","reportedDate":"","resolutionDate":"","jiraLink":"","relatedTo":"Redemption Report","assignedTo":""},{"id":66,"client":"LPL Financial","team":"North America","issueType":"Reports Issue","issue":"A critical concern was brought to our attention by LPL. They've expressed deep frustration regarding the ongoing issue of missing information in the master award report, which has persisted for severa...","detail":"Concern- The master award report is not getting updated correctly and the fields are showing as empty.\nUpdate:- Somir has investigated that the missing information in the reports are available in the source table but not getting visible in the report.\nGyan is working on it.","status":"Resolved","rawStatus":"Resolved","recurring":"","reportedDate":"Several months","resolutionDate":"","jiraLink":"","relatedTo":"Master Award Report (Employee points report)","assignedTo":""},{"id":67,"client":"Wipro","team":"","issueType":"Development Issue","issue":"A user was able to like and comment on the comments shared by his peers before the work anniversary day which means before the release of the SY. This has happened previously as well and has raised qu...","detail":"A user was able to like and comment on the comments shared by his peers before the work anniversary day which means before the release of the SY. This has happened previously as well and this time issue has arised due to notification sent in MS teams.","status":"Resolved","rawStatus":"Resolved","recurring":"Yes","reportedDate":"","resolutionDate":"2024-04-06 00:00:00","jiraLink":"","relatedTo":"Service Yearbook","assignedTo":""},{"id":68,"client":"Sidel","team":"North America","issueType":"Reports Issue","issue":"The details of city is found to be blank for most of the rows","detail":"The client is really dissatisfied as the reports issue is recurring and stands unresolved completely which is impacting their HR partner's experience.The POC is questing why we are unabke to provide a permanent resolution on this since inception.","status":"Resolved","rawStatus":"Resolved","recurring":"Yes","reportedDate":"5th Jun'24","resolutionDate":"","jiraLink":"","relatedTo":"Appreciation & Nomination Report","assignedTo":""},{"id":69,"client":"Wipro","team":"","issueType":"Reports Issue","issue":"Giver details are blank for 400+ entries","detail":"Giver details are not fetched in the report","status":"Resolved","rawStatus":"Resolved","recurring":"Yes","reportedDate":"","resolutionDate":"","jiraLink":"","relatedTo":"Employee points report","assignedTo":""},{"id":70,"client":"LPL Financial","team":"North America","issueType":"Development Issue","issue":"LPL has raised a concern that Milestone catalog emails are displaying code with the intended message.","detail":"Issue: The Milestone emails were impacted for 77 users, where a line of coding appeared in the congratulatory emails received on their service anniversaries. The front end team was configuring changes for a separate client, which inadvertently affected LPL. The impacted period was from 21st May '24 to 4th June '24.\nUpdate: We have asked the relevant team(Somir) to share the total milestone emails ...","status":"Resolved","rawStatus":"Resolved","recurring":"","reportedDate":"4th June","resolutionDate":"","jiraLink":"","relatedTo":"Milestone Catalog Email","assignedTo":""},{"id":71,"client":"Wipro","team":"","issueType":"Development Issue","issue":"User not receiving LSA points and SY for change in employee details in between SY cycle","detail":"User not receiving LSA points and SY for change in employee details in between SY cycle whereas as per the test case, only if the DOJ is changed or null in between SY cycle, the process stops and user do not receive their points and SY. Hence, it needs to be checked why users are not receiving entitled LSA benefits due to change in emp details other than DOJ","status":"Resolved","rawStatus":"Resolved","recurring":"","reportedDate":"2024-11-06 00:00:00","resolutionDate":"","jiraLink":"","relatedTo":"LSA/SY","assignedTo":""},{"id":72,"client":"Wipro","team":"","issueType":"Development Issue","issue":"User not receiving LSA points and SY as the same user had received WCP via CSV upload where reason column consist of a number. Hence SY process not getting started due to this reason","detail":"User not receiving LSA points and SY as the same user had received WCP via CSV upload where reason column consist of a number. Hence SY process not getting started due to this reason","status":"Resolved","rawStatus":"Resolved","recurring":"","reportedDate":"2024-11-06 00:00:00","resolutionDate":"","jiraLink":"","relatedTo":"LSA/SY","assignedTo":""},{"id":73,"client":"Bharat Petroleum Corporation Limited(BPCL)","team":"","issueType":"Reports Issue","issue":"In frontend Appreciation report wrong details are reflecting as per the columns -\nSender dept - hosting dates\nDept - again hosting dates","detail":"In frontend Appreciation report wrong details are reflecting as per the columns -\nSender dept - hosting dates\nDept - again hosting dates","status":"Resolved","rawStatus":"Resolved","recurring":"Yes","reportedDate":"2024-06-11 00:00:00","resolutionDate":"","jiraLink":"","relatedTo":"Appreciation Report","assignedTo":""},{"id":74,"client":"LPL Financial","team":"North America","issueType":"Development Issue","issue":"LPL made several uploads on 6.4.24, all the awards were not generated on their feed. However we fixed 4 uploads according to their privacy setting and additional 4 are there to yet generate on their f...","detail":"we have identified that the server responsible for generating the feed was down at that particular time which prevented the awards from being displayed. However, this issue has been rectified, and the feed generation server is now functioning properly.","status":"Resolved","rawStatus":"Resolved","recurring":"Yes","reportedDate":"2024-04-06 00:00:00","resolutionDate":"","jiraLink":"","relatedTo":"Feed not generated for awards","assignedTo":""},{"id":75,"client":"Sidel","team":"North America","issueType":"Reports Issue","issue":"As Sidel has no budget concept the particular feature of Budget in the Reward- Monetary section shouldnt be visible by default. Previous POC might have missed to remove it. But now when explained to t...","detail":"As Sidel has no budget concept the particular feature of Budget in the Reward- Monetary section shouldnt be visible by default. Previous POC might have missed to remove it. But now when explained to the client they want to remove the Budget feature(Budget Allocation, Budget Utilized, Purchased Budget) to avoid any confusion.","status":"Resolved","rawStatus":"Resolved","recurring":"","reportedDate":"2024-12-06 00:00:00","resolutionDate":"","jiraLink":"","relatedTo":"Budget feature in the reward - monetary section should not appear for sidel","assignedTo":""},{"id":76,"client":"Wipro","team":"","issueType":"Development Issue","issue":"users have not received LSA points and SY due to server being restarted/updated during 1 to 2pm and proper communication was not shared to Dev ops team for the same.","detail":"users have not received LSA points and SY due to server being restarted/updated during 1 to 2pm and proper communication was not shared to Dev ops team for the same.","status":"Resolved","rawStatus":"Resolved","recurring":"","reportedDate":"2024-10-06 00:00:00","resolutionDate":"","jiraLink":"","relatedTo":"Users not receiving SY/LSA points due to time zone update and server restart","assignedTo":""},{"id":77,"client":"Amdocs Management Limited","team":"","issueType":"Reports Issue","issue":"The registration report is not updated.","detail":"When we downloaded the report a few details were not up to date.","status":"Resolved","rawStatus":"Resolved","recurring":"","reportedDate":"","resolutionDate":"","jiraLink":"","relatedTo":"Registration Report","assignedTo":""},{"id":78,"client":"MS Agarwal","team":"","issueType":"Reports Issue","issue":"Mismatch observed","detail":"In the report pulled by selecting the date range from 1st may-26th jun, only three nominations were reflecting for the month of may whereas when the same report was pulled for the whole month i.e. from 1st-31st May the count was different.","status":"Resolved","rawStatus":"Resolved","recurring":"","reportedDate":"27/6/24","resolutionDate":"","jiraLink":"","relatedTo":"Award nomination report","assignedTo":""},{"id":79,"client":"Amdocs Management Limited","team":"","issueType":"Reports Issue","issue":"Billing value column is wrong","detail":"","status":"Resolved","rawStatus":"Resolved","recurring":"","reportedDate":"","resolutionDate":"","jiraLink":"","relatedTo":"Employee points report","assignedTo":""},{"id":80,"client":"Voya India","team":"","issueType":"Reports Issue","issue":"Mismatch observed","detail":"Historic redemption data is not index properly. concern year 2021","status":"Resolved","rawStatus":"Resolved","recurring":"","reportedDate":"2024-04-07 00:00:00","resolutionDate":"","jiraLink":"","relatedTo":"Redemption report","assignedTo":""},{"id":81,"client":"Sidel","team":"North America","issueType":"Reports Issue","issue":"The city filter recently implemented for Sidel in the award nomination and appreciation report section reveals duplicates in the cities of France. Upon investigation, we determined these duplicates st...","detail":"AS discussed with Somir it is not feasible at the moment because firstly, we have to make these changes manually. So if we manually adjust the data and Sidel pushes the same data again, it will overwrite our changes, resulting in potential inconsistencies. This repetitive cycle could lead to operational disruptions and confusion. Secondly, manual changes to transactional data pose a risk due to th...","status":"Resolved","rawStatus":"Resolved","recurring":"","reportedDate":"14/6/2024","resolutionDate":"","jiraLink":"","relatedTo":"APPRECIATION AND AWARD NOMINATION REPORT","assignedTo":""},{"id":82,"client":"LPL Financial","team":"North America","issueType":"Development Issue","issue":"The Amazon issues involve incorrect email addresses entered mainly while redeeming milestone awards and failed emails for items that were out of stock but appeared as in stock at the time of ordering....","detail":"The Amazon issues involve incorrect email addresses entered mainly while redeeming milestone awards and failed emails for items that were out of stock but appeared as in stock at the time of ordering. These issues have been escalated to Amazon, but there is currently no ETA. The client is frustrated as they have ensured correct address entry and other details from their end, and these errors are d...","status":"Resolved","rawStatus":"Resolved","recurring":"","reportedDate":"20/5/2024","resolutionDate":"","jiraLink":"","relatedTo":"Amazon Issue","assignedTo":""},{"id":83,"client":"Amdocs Management limited","team":"","issueType":"Development Issue","issue":"","detail":"","status":"Resolved","rawStatus":"Resolved","recurring":"","reportedDate":"10th July 2024","resolutionDate":"","jiraLink":"","relatedTo":"Wrong feeds are getting generated for badges","assignedTo":""},{"id":84,"client":"Amdocs Management Limited","team":"","issueType":"Reports Issue","issue":"Data pointers are not appearing in beta dashboard","detail":"","status":"Resolved","rawStatus":"Resolved","recurring":"","reportedDate":"","resolutionDate":"","jiraLink":"","relatedTo":"Data pointers are not appearing in beta dashboard","assignedTo":""},{"id":85,"client":"Sidel","team":"North America","issueType":"Development Issue","issue":"Sidel has encountered a persistent cookie issue since October 2023. Following a thorough investigation, we confirmed that no issues originated from our end. While we implemented temporary fixes to mit...","detail":"Sidel has encountered a persistent cookie issue since October 2023. Following a thorough investigation, we confirmed that no issues originated from our end. While we implemented temporary fixes to mitigate the problem, a permanent resolution was not achievable as the root cause did not stem from our systems or processes. Despite this, Sidel continues to express dissatisfaction with the situation.","status":"Pending","rawStatus":"Pending in Client side","recurring":"","reportedDate":"","resolutionDate":"","jiraLink":"","relatedTo":"Cookie Issue","assignedTo":""},{"id":86,"client":"Amdocs Management Limited","team":"","issueType":"Reports Issue","issue":"Anniversary wishes are appearing in appreciation report only for israel users","detail":"Anniversary wishes are appearing in appreciation report only for israel users","status":"Resolved","rawStatus":"Resolved","recurring":"","reportedDate":"","resolutionDate":"","jiraLink":"","relatedTo":"Appreciation report","assignedTo":""},{"id":87,"client":"Wipro","team":"","issueType":"Development Issue","issue":"User not receiving LSA points and SY as the same user had received WCP via CSV upload where reason column consist of a number. Hence SY process not getting started due to this reason","detail":"User not receiving LSA points and SY as the same user had received WCP via CSV upload where reason column consist of a number. Hence SY process not getting started due to this reason","status":"Resolved","rawStatus":"Resolved","recurring":"Yes","reportedDate":"","resolutionDate":"","jiraLink":"","relatedTo":"LSA/SY","assignedTo":""},{"id":88,"client":"Wipro","team":"","issueType":"Development Issue","issue":"users have not received LSA points and SY due to server being restarted/updated during 1 to 2pm again","detail":"users have not received LSA points and SY due to server being restarted/updated during 1 to 2pm again","status":"Resolved","rawStatus":"Resolved","recurring":"Yes","reportedDate":"","resolutionDate":"","jiraLink":"","relatedTo":"LSA/SY","assignedTo":""},{"id":89,"client":"Factset","team":"","issueType":"Development Issue","issue":"User Avanti reported that her gift voucher of 10,000 points was not utilized by her, but by someone else. Although the voucher was sent to her registered email, her account shows it was logged into fi...","detail":"","status":"Resolved","rawStatus":"Resolved","recurring":"","reportedDate":"","resolutionDate":"","jiraLink":"","relatedTo":"Gift Vouchers","assignedTo":""},{"id":90,"client":"GroupM, tata Play and infosys","team":"","issueType":"Development Issue","issue":"When file throughs and error while uploading via upload csv tab, however the data got captured in the award nomination report","detail":"When file throughs and error while uploading via upload csv tab, however the data got captured in the award nomination report","status":"Resolved","rawStatus":"Resolved","recurring":"","reportedDate":"","resolutionDate":"","jiraLink":"","relatedTo":"Award Nomination Report","assignedTo":""},{"id":91,"client":"Calyx","team":"","issueType":"Development Issue","issue":"feed banner disapperaing from EU Servers","detail":"feed banner disapperaing from EU Servers","status":"Resolved","rawStatus":"Resolved","recurring":"","reportedDate":"","resolutionDate":"","jiraLink":"","relatedTo":"Feed banner","assignedTo":""},{"id":92,"client":"LPL Financial","team":"North America","issueType":"Reports Issue","issue":"Missing information","detail":"Concern:-There are multiple blank columns wherein informations found to be missing in the master award report (employee points report).This is a recurring issue wherein everytime the issue is reported, the team does a manual fix .\nUpdate:-As per our last call on 11th Jul'24 with the client along with Somir and Gyan this has been discussed and agreed that VC team will find a complete RCA and will h...","status":"Pending","rawStatus":"Pending in Client side","recurring":"Yes","reportedDate":"","resolutionDate":"","jiraLink":"","relatedTo":"Master Award Report","assignedTo":""},{"id":93,"client":"Autoliv","team":"","issueType":"Development Issue","issue":"Users with no email are not receiving the login credentials via mobile number","detail":"Users with no email are not receiving the login credentials via mobile number","status":"Resolved","rawStatus":"Resolved","recurring":"","reportedDate":"","resolutionDate":"","jiraLink":"","relatedTo":"Users with no email are not receiving the login credentials via mobile number","assignedTo":""},{"id":94,"client":"SK Peimacore","team":"","issueType":"Reports Issue","issue":"need to include citation details and privacy status in both the Appreciation Report and the Nomination Report","detail":"need to include citation details and privacy status in both the Appreciation Report and the Nomination Report","status":"Resolved","rawStatus":"Resolved","recurring":"","reportedDate":"","resolutionDate":"","jiraLink":"","relatedTo":"Need to include citation details and privacy status in the Appreciation Report and the Nomination Report","assignedTo":""},{"id":95,"client":"ITC Hotels","team":"","issueType":"Reports Issue","issue":"","detail":"","status":"Resolved","rawStatus":"Resolved","recurring":"","reportedDate":"","resolutionDate":"","jiraLink":"","relatedTo":"Login Report","assignedTo":""},{"id":96,"client":"ACG","team":"","issueType":"Development Issue","issue":"Points redeemed more than actual points in wallet","detail":"User was able to redeem more points than what was actually their in the user's wallet","status":"Resolved","rawStatus":"Resolved","recurring":"","reportedDate":"","resolutionDate":"","jiraLink":"","relatedTo":"Points redeemed more than actual points in wallet","assignedTo":""},{"id":97,"client":"Tata Play","team":"","issueType":"Reports Issue","issue":"Discrepancy in zero value award nominations","detail":"The zero value award nominations are getting split-some are featuring in appreciation report and some in nomination report","status":"Resolved","rawStatus":"Resolved","recurring":"","reportedDate":"","resolutionDate":"","jiraLink":"","relatedTo":"Zero Value Awards","assignedTo":""},{"id":98,"client":"Bluestar","team":"","issueType":"Development Issue","issue":"Need the correct SAP division code, recipient cost centre in the Employee points report for Invoicing purpose","detail":"The data flowing right now is incorrect, the customised columns integrated seems to be wrong","status":"Resolved","rawStatus":"Resolved","recurring":"","reportedDate":"","resolutionDate":"","jiraLink":"","relatedTo":"Employee points report","assignedTo":""},{"id":99,"client":"Infosys","team":"","issueType":"Reports Issue","issue":"Mismatch in the historic data","detail":"There are incorrect data in the employee points report","status":"Resolved","rawStatus":"Resolved","recurring":"","reportedDate":"","resolutionDate":"","jiraLink":"","relatedTo":"Employee points report","assignedTo":""},{"id":100,"client":"Hyundai Capital","team":"North America","issueType":"Development Issue","issue":"Winner selector was not able to announce the winner for the panel award","detail":"Although the panel award has been configured as a 0 value award for Hyundai. However, while selecting winner, the error is getting displayed as \u201cInsufficient budget or budget holder not found\u201d.\nDevelopment Team Update- As per HCCA workflow, the budget is usually deducted from the approver. However, in panel award, the budget is deducted from the winner selector.\nBecause of this, it is crucial that...","status":"Resolved","rawStatus":"Resolved","recurring":"","reportedDate":"","resolutionDate":"","jiraLink":"","relatedTo":"Panel Award","assignedTo":""},{"id":101,"client":"LPL Financial","team":"North America","issueType":"Reports Issue","issue":"Duplicate Entries in redemption report are still showing in the report even after fixing it previously.","detail":"There are two entries for multiple users for the same amount, \n\nThe client has expressed uncertainty about our redemption report due to the presence of duplicates. They are concerned about the accuracy of the reports for other months, including August. They would like us to provide a cleaned redemption report so that they do not have to reach out each month for corrections.\n\nUpdate:- \nNihal will b...","status":"Resolved","rawStatus":"Resolved","recurring":"Yes","reportedDate":"","resolutionDate":"","jiraLink":"","relatedTo":"Redemption Report","assignedTo":""},{"id":102,"client":"LPL Financial","team":"North America","issueType":"Development Issue","issue":"LPL has encountered another issue regarding negative balance points. An employee, Deb Stanback (Employee ID: 106941), has a negative Vantage Points balance.","detail":"LPL has encountered another issue regarding negative balance points. An employee, Deb Stanback (Employee ID: 106941), has a negative Vantage Points balance.This has happened before and have impacted many users. It was assured to LPL that it wont happen again as it impacts the user experience but again this issue has reported by LPL. Jira ticket has been raised for the same-VC-8408.","status":"Resolved","rawStatus":"Resolved","recurring":"Yes","reportedDate":"","resolutionDate":"","jiraLink":"","relatedTo":"Negative Points Balance","assignedTo":""},{"id":103,"client":"LPL Financial","team":"North America","issueType":"Development Issue","issue":"When the user was about to redeem her 25th work anniversary gift, she found that the milestone catalog page was blank.","detail":"The user was advised by the VC to log out, clear cookies and cache, and then try accessing the catalog again. Despite following these instructions, the user continued to experience the same issue. She sent a screenshot of the problem back to the VC but has not received any further response.\n\nThe client is very frustrated due to the delayed response from the VC, especially after the client\u2019s point ...","status":"Resolved","rawStatus":"Resolved","recurring":"","reportedDate":"","resolutionDate":"","jiraLink":"","relatedTo":"Milestone Catalog down","assignedTo":""},{"id":104,"client":"BMW Mexico","team":"","issueType":"Development Issue","issue":"Requirement Gathering, Product Stability,\tLanguage Support, Deployment on India Server","detail":"Requirement Gathering: It appears that our initial requirement gathering may have missed some important details, or these details were not shared with us. For instance, the client requested Spanish language support for their blue-collar employees, which was not fully integrated into the platform.\nProduct Stability: Although the product delivered includes several innovative add-ons, these features ...","status":"Resolved","rawStatus":"Resolved","recurring":"","reportedDate":"","resolutionDate":"","jiraLink":"","relatedTo":"Vpulse relate issues","assignedTo":""},{"id":105,"client":"BMW Mexico","team":"","issueType":"Development Issue","issue":"The client reported that the survey did not launch as scheduled. It went live later in the day, and they received an email stating that there was no survey to respond to.","detail":"The client reported that the survey did not launch as scheduled. It went live later in the day, and they received an email stating that there was no survey to respond to.","status":"Resolved","rawStatus":"Resolved","recurring":"","reportedDate":"","resolutionDate":"","jiraLink":"","relatedTo":"VPulse Survey Launch Time","assignedTo":""},{"id":106,"client":"BMW Mexico","team":"","issueType":"Development Issue","issue":"Delay in real-time data at dashbord","detail":"The client noted that the dashboard, which is supposed to show real-time data, displayed blank data when they attempted to access it. But it showes data next day.","status":"Resolved","rawStatus":"Resolved","recurring":"","reportedDate":"","resolutionDate":"","jiraLink":"","relatedTo":"Delay in Dashboard Data","assignedTo":""},{"id":107,"client":"Wipro","team":"","issueType":"Reports Issue","issue":"Hashtag column is missing","detail":"Hashtag column is missing","status":"Resolved","rawStatus":"Resolved","recurring":"","reportedDate":"","resolutionDate":"","jiraLink":"","relatedTo":"Employee points report","assignedTo":""},{"id":108,"client":"Tata Motors Limited","team":"","issueType":"Reports Issue","issue":"Duplicate Entry columns found in Appreciation Report","detail":"Duplicate Entry columns found in Appreciation Report","status":"Resolved","rawStatus":"Resolved","recurring":"","reportedDate":"","resolutionDate":"","jiraLink":"","relatedTo":"Appreciation Report","assignedTo":""},{"id":109,"client":"Tata Motors Limited","team":"","issueType":"Reports Issue","issue":"Approval level -2 is showing Pending but Final status showing Declined in Award nomination report","detail":"Approval level -2 is showing Pending but Final status showing Declined in Award nomination report","status":"Resolved","rawStatus":"Resolved","recurring":"","reportedDate":"","resolutionDate":"","jiraLink":"","relatedTo":"Award nomination report","assignedTo":""},{"id":110,"client":"Infosys","team":"","issueType":"Development Issue","issue":"Invalidation was disabled since June 2024\nManual extension of points without HR approval","detail":"","status":"Pending","rawStatus":"Pending in Client side","recurring":"","reportedDate":"","resolutionDate":"","jiraLink":"","relatedTo":"Manual Points Extention","assignedTo":""},{"id":111,"client":"Compex Legal","team":"North America","issueType":"Development Issue","issue":"Compex legal has been facing issue with termination of employee.","detail":"As mentioned by Compex HR POC, there was a bulk termination of 34 employees on August 22nd, but this change has not been reflected in our platform. Since we have ADP integration, it should have automatically updated. Which is completed on 3rd Sep by Gyan. We are still waiting on RCA. Today, we received a similar report from Compex regarding a similar issue. Subhendu is currently working on a perma...","status":"Resolved","rawStatus":"Resolved","recurring":"Yes","reportedDate":"","resolutionDate":"","jiraLink":"","relatedTo":"Issue with employee termination","assignedTo":""},{"id":112,"client":"Hyundai Capital","team":"North America","issueType":"Development Issue","issue":"Post creation the end date is automatically getting changed to 1st Oct'24. And even the end date for nomination is 15th September but post creation its getting changed to 16th Sept.","detail":"Post creation the end date is automatically getting changed to 1st Oct'24. And even the end date for nomination is 15th September but post creation its getting changed to 16th Sept. Ticket has been created and it is said that is a frontend issue rather than backend VC-8389.","status":"Resolved","rawStatus":"Resolved","recurring":"","reportedDate":"","resolutionDate":"","jiraLink":"","relatedTo":"Issue with end date in panel award","assignedTo":""},{"id":113,"client":"LPL Financial","team":"North America","issueType":"Reports Issue","issue":"Duplicate Entries in Master Award. This issue is recurring; it has happened before and is occurring again.","detail":"As discussed with Somir, he mentioned that the issue would be resolved, but problems arise due indexing with the master award. Although Somir and Gyan have indicated that this will be fixed by Wednesday, September 25th, we cannot extend beyond that date. The client is very frustrated, as this issue has been ongoing for a year. If the problem is not resolved and communicated to the client by Septem...","status":"Resolved","rawStatus":"Resolved","recurring":"Yes","reportedDate":"","resolutionDate":"","jiraLink":"","relatedTo":"Master Award Report","assignedTo":""},{"id":114,"client":"Tata Play","team":"","issueType":"Reports Issue","issue":"","detail":"1. Since they are having multilevel approvals-so in the \"approver 1 approved on\" column usually features the date. But there were around 389 records for which email ids were reflecting. \n2. In the \"approver 3 approved on\" column, records are featuring as \"some(date & time).","status":"Resolved","rawStatus":"Resolved","recurring":"","reportedDate":"","resolutionDate":"","jiraLink":"","relatedTo":"Award Nomination Report","assignedTo":""},{"id":115,"client":"Tata technologies","team":"","issueType":"Reports Issue","issue":"In the report we can see some discrepancies where final approval is showing as approved but the status column populates it as 0. So it's confusing for Admin. Also, multiple approver details are not re...","detail":"In the report we can see some discrepancies where final approval is showing as approved but the status column populates it as 0. So it's confusing for Admin. Also, multiple approver details are not reflecting for all the line items/nominations.","status":"Resolved","rawStatus":"Resolved","recurring":"","reportedDate":"","resolutionDate":"","jiraLink":"","relatedTo":"Award Nomination Report","assignedTo":""},{"id":116,"client":"Wipro","team":"","issueType":"Reports Issue","issue":"In Wipro appreciation report. All data are misplaced","detail":"In Wipro appreciation report. All data are misplaced","status":"Resolved","rawStatus":"Resolved","recurring":"","reportedDate":"","resolutionDate":"","jiraLink":"","relatedTo":"Appreciation Report","assignedTo":""},{"id":117,"client":"Wipro","team":"","issueType":"Development Issue","issue":"The Governance check that we implemented for Wipro is not functioning properly: One manager can give 10 awards per month( calendar month).(D2 & E : no capping)","detail":"Each individual is restricted to granting only one award per month to the same person. This limitation applies to individual awards, while team awards remain separate.","status":"Resolved","rawStatus":"Resolved","recurring":"","reportedDate":"","resolutionDate":"","jiraLink":"","relatedTo":"","assignedTo":""},{"id":118,"client":"Amdocs","team":"","issueType":"Reports Issue","issue":"The automated LSA awards still appear in the appreciation report for AML(1373).\nAdditionally, I suspect that four users attempted to manipulate the platform using scripts. We are aware of 900 transact...","detail":"The automated LSA awards still appear in the appreciation report for AML(1373).\nAdditionally, I suspect that four users attempted to manipulate the platform using scripts. We are aware of 900 transactions already. However, there are nine new transactions where it appears they tried to self-nominate but we couldn't find any details for them(receiver details).","status":"Resolved","rawStatus":"Resolved","recurring":"","reportedDate":"","resolutionDate":"","jiraLink":"","relatedTo":"Appreciation report","assignedTo":""},{"id":119,"client":"Celebal Technologies","team":"","issueType":"Development Issue","issue":"There is a limit of 50 appreciations at a time. However, at Celebal Tech, they have used a script to bypass this and issue more than 50 appreciations, which poses a security concern.","detail":"There is a limit of 50 appreciations at a time. However, at Celebal Tech, they have used a script to bypass this and issue more than 50 appreciations, which poses a security concern.","status":"Resolved","rawStatus":"Resolved","recurring":"","reportedDate":"","resolutionDate":"","jiraLink":"","relatedTo":"Security Issue","assignedTo":""},{"id":120,"client":"Wipro","team":"","issueType":"Reports Issue","issue":"Billing Val missing from Employee Points report","detail":"Billing Value column missing from Employee Points report","status":"Resolved","rawStatus":"Resolved","recurring":"","reportedDate":"","resolutionDate":"","jiraLink":"","relatedTo":"Employee Points report","assignedTo":""},{"id":121,"client":"Wipro","team":"","issueType":"Development Issue","issue":"Yearbook Insight section showing incorrect data due to indexing issue","detail":"Yearbook Insight section showing incorrect data due to indexing issue","status":"Resolved","rawStatus":"Resolved","recurring":"","reportedDate":"","resolutionDate":"","jiraLink":"","relatedTo":"Yearbook Insight section showing incorrect data due to indexing issue","assignedTo":""},{"id":122,"client":"Bluestar","team":"","issueType":"Reports Issue","issue":"The budget reports seems to have mismatch","detail":"There is an automated Low budget report triggered to Bluestar. Earlier the report only shared the details of budget holders who had >2000 points. But as per client there are several budgetholders who were never given budget they want the details to come up in the report. They had asked to add all the budget holder's names irrespective of budget given or not.","status":"Resolved","rawStatus":"Resolved","recurring":"","reportedDate":"","resolutionDate":"","jiraLink":"","relatedTo":"Automated Low budget report","assignedTo":""},{"id":123,"client":"Vitesco","team":"","issueType":"Reports Issue","issue":"The reports seems to have mismatch","detail":"For August month, in the employee points report and award nomination report, the approved points and balance is not matching for which billing is also pending","status":"Resolved","rawStatus":"Resolved","recurring":"","reportedDate":"","resolutionDate":"","jiraLink":"","relatedTo":"Employee points report and Award nomination report","assignedTo":""},{"id":124,"client":"BPCL","team":"","issueType":"Reports Issue","issue":"Invalid date in the report","detail":"Invalid date in date column","status":"Resolved","rawStatus":"Resolved","recurring":"","reportedDate":"","resolutionDate":"","jiraLink":"","relatedTo":"Appreciation report","assignedTo":""},{"id":125,"client":"Tata Motors Limited","team":"","issueType":"Reports Issue","issue":"Invalid date in the report","detail":"Invalid date in date column","status":"Resolved","rawStatus":"Resolved","recurring":"","reportedDate":"","resolutionDate":"","jiraLink":"","relatedTo":"Appreciation report","assignedTo":""},{"id":126,"client":"Amdocs Management Limited","team":"","issueType":"Reports Issue","issue":"Points not reflected","detail":"The birthday points and work anniversary points are not reflected in the report","status":"Resolved","rawStatus":"Resolved","recurring":"","reportedDate":"","resolutionDate":"","jiraLink":"","relatedTo":"Employee Points report","assignedTo":""},{"id":127,"client":"Wipro","team":"","issueType":"Development Issue","issue":"Employee id is missing","detail":"Two users where employee id is missing","status":"Resolved","rawStatus":"Resolved","recurring":"","reportedDate":"","resolutionDate":"","jiraLink":"","relatedTo":"Appreciation report","assignedTo":""},{"id":128,"client":"Wipro","team":"","issueType":"Development Issue","issue":"users have not received LSA points and SY due to server being restarted/updated during 1 to 2pm and proper communication was not shared to Dev ops team for the same.","detail":"users have not received LSA points and SY due to server being restarted/updated during 1 to 2pm and proper communication was not shared to Dev ops team for the same.","status":"Resolved","rawStatus":"Resolved","recurring":"","reportedDate":"","resolutionDate":"","jiraLink":"","relatedTo":"Users not receiving SY/LSA points due to time zone update and server restart","assignedTo":""},{"id":129,"client":"Multiple Clients\n\nTata Play, Vitesco","team":"","issueType":"Reports Issue","issue":"Report is not loading","detail":"Report is not loading, ticket submitted no response yet.","status":"Resolved","rawStatus":"Resolved","recurring":"","reportedDate":"","resolutionDate":"","jiraLink":"","relatedTo":"Award Nomination Report","assignedTo":""},{"id":130,"client":"TATA TELESERVICES","team":"","issueType":"Reports Issue","issue":"Incorrect data showing in the dashboard preccured report","detail":"allocation amount is incorrect","status":"Resolved","rawStatus":"Resolved","recurring":"","reportedDate":"","resolutionDate":"","jiraLink":"","relatedTo":"Budget Allocation Report","assignedTo":""},{"id":131,"client":"Wipro","team":"","issueType":"Reports Issue","issue":"Award Value Mismatch","detail":"Award Value mismatch found in employee points report for some countries and the same has been reported to Somir","status":"Resolved","rawStatus":"Resolved","recurring":"","reportedDate":"","resolutionDate":"","jiraLink":"","relatedTo":"Employee Point Report","assignedTo":""},{"id":132,"client":"ITC Hotels","team":"","issueType":"Reports Issue","issue":"Biiling Value mismatch","detail":"Employee points report the figures reflecting under the \"points\" column do not match with the \"Billing Value\" column although the client only operates in India.","status":"Resolved","rawStatus":"Resolved","recurring":"","reportedDate":"","resolutionDate":"","jiraLink":"","relatedTo":"Employee Point Report","assignedTo":""},{"id":133,"client":"Airtel","team":"","issueType":"Development Issue","issue":"There is an issue highlighted by Airtel that 231 users for whom they have pushed the data to us via SFTP are not showing as active in our platform","detail":"There is an issue highlighted by Airtel that 231 users for whom they have pushed the data to us via SFTP are not showing as active in our platform. Need to investigate the reason here.","status":"Resolved","rawStatus":"Resolved","recurring":"","reportedDate":"","resolutionDate":"","jiraLink":"","relatedTo":"Employee registration issue","assignedTo":""},{"id":134,"client":"Autoliv","team":"","issueType":"Reports Issue","issue":"Budget points summary in vantage rewards>Overview section doesnot get auto indexed.","detail":"Budget points summary doesnot get autoindexed due which client faces mismatches between the budget allocation report and the figures showing in the dashboard.","status":"Resolved","rawStatus":"Resolved","recurring":"","reportedDate":"","resolutionDate":"","jiraLink":"","relatedTo":"Report dashboard","assignedTo":""},{"id":135,"client":"Perceptive","team":"","issueType":"Reports Issue","issue":"Addition of custom fields in the employee points report","detail":"Request for addition of three fields in the employee points report for the client Perceptive.Ticket has been pending since 9th October","status":"Resolved","rawStatus":"Resolved","recurring":"","reportedDate":"","resolutionDate":"","jiraLink":"","relatedTo":"Employee points report","assignedTo":""},{"id":136,"client":"Pluxee","team":"","issueType":"Reports Issue","issue":"Budget points summary in vantage rewards>Overview section doesnot get auto indexed.","detail":"Budget points summary doesnot get autoindexed due which client faces mismatches between the budget allocation report and the figures showing in the dashboard. As per reports budget allocated is 77000 but in the dashboard it shows a seperate number of 1077000.","status":"Resolved","rawStatus":"Resolved","recurring":"","reportedDate":"","resolutionDate":"","jiraLink":"","relatedTo":"Report dashboard","assignedTo":""},{"id":137,"client":"LPL Financial","team":"North America","issueType":"Reports Issue","issue":"In 2023, Amy requested that certain data be manually corrected in the master award report due to errors during a CSV points upload. At the time, there was no validation check to catch incorrect inputs...","detail":"In 2023, Amy requested that certain data be manually corrected in the master award report due to errors during a CSV points upload. At the time, there was no validation check to catch incorrect inputs, which allowed these inaccuracies. Recently, the backend team implemented a check to ensure errors are flagged when incorrect data is input into the CSV.\nAccording to Somir, all data has since been u...","status":"Resolved","rawStatus":"Resolved","recurring":"","reportedDate":"","resolutionDate":"","jiraLink":"","relatedTo":"Master Award Report","assignedTo":""},{"id":138,"client":"HDFC ERGO","team":"","issueType":"Development Issue","issue":"1. Award visibility to different grade groups 2.Award flow- Nomination and approval flow mechanism 3. Award configuration mismatch in UAT and PROD such as filters,nominator grade groups 4. Quota confi...","detail":"Initially the issue was pertaining to the visibility of the awards to users of different grade groups.The issue was fixed for few grade groups/users but it was not resolved for all. Award configuration mismatch is observed in UAT vs PROD where filters were missing for certain awards in PROD as compared to UAT. Quota configuration was not working in PROD which was configured and working fine in UAT...","status":"Resolved","rawStatus":"Resolved","recurring":"","reportedDate":"","resolutionDate":"","jiraLink":"","relatedTo":"Multiple award configuration issue-Monthly and Quarterly award","assignedTo":""},{"id":139,"client":"Qualitest","team":"","issueType":"Development Issue","issue":"For qualitest, the birthday mail templates were provided from clients end and are hardcoded in the system but due to code merge the hardcoded template was removed and default was triggered. The issue ...","detail":"For qualitest, the birthday mail templates were provided from clients end and are hardcoded in the system but due to code merge the hardcoded template was removed and default was triggered. The issue was recognised yesterday only after the concern was raised by a user.","status":"Resolved","rawStatus":"Resolved","recurring":"","reportedDate":"","resolutionDate":"","jiraLink":"","relatedTo":"Default email template getting triggered for birthday","assignedTo":""},{"id":140,"client":"Icertis","team":"","issueType":"Reports Issue","issue":"The numbers in the Points column and billing value column for countries enabled in Europe is mismatched in Employee points report","detail":"The billing value is showing higher value than points colum. For this company the PPU is 1:1 for all countires. So points amd billing value should show the exact value. This is affecting their payroll as the invoicing happens on entity wise.","status":"Resolved","rawStatus":"Resolved","recurring":"","reportedDate":"","resolutionDate":"","jiraLink":"","relatedTo":"Points and billing value column mismatch","assignedTo":""},{"id":141,"client":"Tata Technologies","team":"","issueType":"Reports Issue","issue":"There are multiple descrepencies for Tata technologies where some awards are not showing up in the Award Nomination Report but showing in the report shared from backend and vice versa.","detail":"There are multiple descrepencies for Tata technologies where some awards are not showing up in the Award Nomination Report but showing in the report shared from backend and vice versa.","status":"Resolved","rawStatus":"Resolved","recurring":"","reportedDate":"","resolutionDate":"","jiraLink":"","relatedTo":"Award Nomination report\nVS\nReport shared from Backend","assignedTo":""},{"id":142,"client":"LPL Financial","team":"North America","issueType":"Development Issue","issue":"We have a user from LPL Financial tamica.newton@lplfinancial.com who has negative points balance in account.","detail":"According to Nihal upon checking the logs, he found that one of the item in an order placed on 13-12-2023 was returned, the same has not been handled in the points statement hence on 13-12-2023 it is seen that the points became negative. \n\nHence this is really concerning as it is the 3rd time that the negative points have occured for LPL. And Nihal has stated that there is no permanent solution as...","status":"Resolved","rawStatus":"Resolved","recurring":"Yes","reportedDate":"","resolutionDate":"","jiraLink":"","relatedTo":"Negative points","assignedTo":""},{"id":143,"client":"Wipro","team":"","issueType":"Development Issue","issue":"It has been observed that when the budget is insufficient, the system throws an error, but the nomination still moves to the \"Pending\" status. This prevents the nominator from renomination and display...","detail":"we have the following concerns:\n\nIf the budget is insufficient, \n1. why does the system allow the nomination to remain in the \"Pending\" status?\n\n2. In most cases, the nominator and approver are the same, meaning it's an auto-approved award.\n\n3. The nominator/approver does not receive any notification to take the appropriate action, which results in the nomination being auto-declined after 5 days. ...","status":"Resolved","rawStatus":"Resolved","recurring":"","reportedDate":"","resolutionDate":"","jiraLink":"","relatedTo":"Wipro- auto approval award workflow","assignedTo":""},{"id":144,"client":"Bosch BGSW","team":"","issueType":"Reports Issue","issue":"There is a budget mismatch for Bosch 577. The budget was set to 0 before uploading the new budget, but the balance points still show a difference.","detail":"There is a budget mismatch for Bosch 577. The budget was set to 0 before uploading the new budget, but the balance points still show a difference.","status":"Resolved","rawStatus":"Resolved","recurring":"","reportedDate":"","resolutionDate":"","jiraLink":"","relatedTo":"Budget Deallocation Mismatch","assignedTo":""},{"id":145,"client":"Wipro","team":"","issueType":"Reports Issue","issue":"Negative Balance Points showing for 2000 users","detail":"Negative Balance Points showing for 2000 users","status":"Resolved","rawStatus":"Resolved","recurring":"","reportedDate":"","resolutionDate":"","jiraLink":"","relatedTo":"Balance Points Report","assignedTo":""},{"id":146,"client":"LPL Financial","team":"North America","issueType":"Reports Issue","issue":"Error while downloading the master award report for LPL Financial","detail":"Error while downloading the master award report for LPL Financial","status":"Resolved","rawStatus":"Resolved","recurring":"","reportedDate":"","resolutionDate":"","jiraLink":"","relatedTo":"Master award report","assignedTo":""},{"id":147,"client":"Indexing issue","team":"","issueType":"Reports Issue","issue":"Reports need to be indexed, even if auto-indexing is enabled.","detail":"Reports need to be indexed, even if auto-indexing is enabled.","status":"Resolved","rawStatus":"Resolved","recurring":"","reportedDate":"","resolutionDate":"","jiraLink":"","relatedTo":"Reports need to be indexed, even if auto-indexing is enabled.","assignedTo":""},{"id":148,"client":"Wipro","team":"","issueType":"Development Issue","issue":"There are two instances where the Service year book, Certificate and Share did not trigger due to server down issue","detail":"There are two instances where the Service year book, Certificate and Share didnot trigger due to server down issue","status":"Resolved","rawStatus":"Resolved","recurring":"Yes","reportedDate":"","resolutionDate":"","jiraLink":"","relatedTo":"Service Year Book","assignedTo":""},{"id":149,"client":"Amdocs","team":"","issueType":"Reports Issue","issue":"Duplicate points","detail":"To provide some context, we invoice Amdocs for points redemption. Recently, we identified a concerning case involving a user who was invoiced in July based on a validated report (screenshots attached below). However, the same user reappeared in the November report, raising questions about potential duplication of points. Upon reviewing the data, we confirmed that the November transaction is genuin...","status":"Resolved","rawStatus":"Resolved","recurring":"","reportedDate":"","resolutionDate":"","jiraLink":"","relatedTo":"Duplicate points in Redemption report","assignedTo":""},{"id":150,"client":"Amdocs","team":"","issueType":"Reports Issue","issue":"Inactive users receive points","detail":"Several users marked as \"inactive\" since June 21 were allocated points on December 12. Ideally, their allocation should be pending or not registered, but it appears as \"approved.\"","status":"Resolved","rawStatus":"Resolved","recurring":"","reportedDate":"","resolutionDate":"","jiraLink":"","relatedTo":"Employee Points report","assignedTo":""},{"id":151,"client":"Wipro","team":"","issueType":"Development Issue","issue":"A user marked as inactive in the \"employee details\" table since 2023 was still active in the \"user\" table and subsequently received points for a Long Service Award in December 2024.","detail":"A user marked as inactive in the \"employee details\" table since 2023 was still active in the \"user\" table and subsequently received points for a Long Service Award in December 2024.","status":"Resolved","rawStatus":"Resolved","recurring":"","reportedDate":"","resolutionDate":"","jiraLink":"","relatedTo":"A user marked as inactive in the \"employee details\" table since 2023 was still active in the \"user\" table and subsequently received points for a Long Service Award in December 2024.","assignedTo":""},{"id":152,"client":"BIAL/Zuventus/Bluestar","team":"","issueType":"Development Issue","issue":"The super admin and HR admin access is automatically revoked.","detail":"The super admin and HR admin access is automatically revoked.","status":"Resolved","rawStatus":"Resolved","recurring":"","reportedDate":"","resolutionDate":"","jiraLink":"","relatedTo":"The super admin and HR admin access is automatically revoked.","assignedTo":""},{"id":153,"client":"Qualitest/DHL< india server / Mitsogo technologies <us server","team":"","issueType":"Development Issue","issue":"The user uploads the file successfully, but it does not appear for approval. However, it is visible in the Dealspoint account.","detail":"The user uploads the file successfully, but it does not appear for approval. However, it is visible in the Dealspoint account.","status":"Resolved","rawStatus":"Resolved","recurring":"","reportedDate":"","resolutionDate":"","jiraLink":"","relatedTo":"Approve option not available","assignedTo":""},{"id":154,"client":"Bosch BGSW","team":"","issueType":"Reports Issue","issue":"Data has not been synced since December 2024.","detail":"Data has not been synced since December 2024.","status":"Resolved","rawStatus":"Resolved","recurring":"","reportedDate":"","resolutionDate":"","jiraLink":"","relatedTo":"Admin Dashboard","assignedTo":""},{"id":155,"client":"Tata Motors Limited","team":"","issueType":"Reports Issue","issue":"It was highlighted on 3rd Feb 2024 that there are 326 cases wherein the first level approver has declined the award as per the report, but the final status is showing as Approved and points are given ...","detail":"It was highlighted on 3rd Feb 2024 that there are 326 cases wherein the first level approver has declined the award as per the report, but the final status is showing as Approved and points are given out to the users.\n\nThis Issue was discussed earlier as well in Nov the issue seems to have been resolved but we are again finding the error in Jan month.","status":"Resolved","rawStatus":"Resolved","recurring":"Yes","reportedDate":"","resolutionDate":"","jiraLink":"","relatedTo":"Award Nomination Report","assignedTo":""},{"id":156,"client":"LPL Financial","team":"North America","issueType":"Reports Issue","issue":"Despite decrypting the data for LPL, the redemption report still appears blank for inactive users.\n \nThe redemption report should not contain blank fields moving forward. However, despite the decrypti...","detail":"Despite decrypting the data for LPL, the redemption report still appears blank for inactive users.\n \nThe redemption report should not contain blank fields moving forward. However, despite the decryption, we continue to see blank values for inactive users each month","status":"Resolved","rawStatus":"Resolved","recurring":"Yes","reportedDate":"","resolutionDate":"","jiraLink":"","relatedTo":"Redemption Report","assignedTo":""},{"id":157,"client":"Kotak","team":"","issueType":"Reports Issue","issue":"Customised Redemption Report for Billing","detail":"Customised Redemption Report for Billing","status":"Resolved","rawStatus":"Resolved","recurring":"","reportedDate":"","resolutionDate":"","jiraLink":"","relatedTo":"Redemption Report","assignedTo":""},{"id":158,"client":"Celebal Technologies","team":"","issueType":"Development Issue","issue":"Mismatch between Employee Points report and Dashboard data","detail":"Mismatch between Employee Points report and Dashboard data","status":"Resolved","rawStatus":"Resolved","recurring":"","reportedDate":"","resolutionDate":"","jiraLink":"","relatedTo":"Employee Points report","assignedTo":""},{"id":159,"client":"LPL Financial","team":"North America","issueType":"Reports Issue","issue":"We have received another concern from LPL regarding the reward type column in the master award report. They\u2019ve noticed that up until August 6th, 2024, their greetings were appearing as badges, whereas...","detail":"We have received another concern from LPL regarding the reward type column in the master award report. They\u2019ve noticed that up until August 6th, 2024, their greetings were appearing as badges, whereas usually, greetings are displayed as wishes in the reward type column. However, from August 9th, 2024, the greetings began appearing as wishes in the same column, as expected.","status":"Resolved","rawStatus":"Resolved","recurring":"Yes","reportedDate":"","resolutionDate":"","jiraLink":"","relatedTo":"Master Award report","assignedTo":""},{"id":160,"client":"LPL Financial","team":"North America","issueType":"Reports Issue","issue":"Amy has identified a few issues in the master award report that require your attention. Firstly, there is a quotation in the report that needs to be cleaned up. Additionally, Amy found an issue with o...","detail":"Amy has identified a few issues in the master award report that require your attention. Firstly, there is a quotation in the report that needs to be cleaned up. Additionally, Amy found an issue with one particular cost center (4225 Entprise Bus Dev \u00e2\u20ac\u201c Large Deals).\n\nThere is also one recognition where the awarder's information was missing, and it was  sent on the platform.","status":"Resolved","rawStatus":"Resolved","recurring":"Yes","reportedDate":"","resolutionDate":"","jiraLink":"","relatedTo":"Master Award report","assignedTo":""},{"id":161,"client":"LPL Financial","team":"North America","issueType":"Development Issue","issue":"An LPL user (Patrick.Moran@lplfinancial.com) received an old card on their work anniversary, as shown in the attached screenshot. \n\nThe cards were updated, and Amy, the point of contact from LPL, rece...","detail":"An LPL user (Patrick.Moran@lplfinancial.com) received an old card on their work anniversary, as shown in the attached screenshot. \n\nThe cards were updated, and Amy, the point of contact from LPL, received the updated card on February 7th, 2025 on her work anniversary, which was updated on December 28th, 2024.\n\nHowever, the user in question received the old card before the update. No changes were m...","status":"Resolved","rawStatus":"Resolved","recurring":"","reportedDate":"","resolutionDate":"","jiraLink":"","relatedTo":"MD Cards (email templates of birthday & anniversary)","assignedTo":""},{"id":162,"client":"LPL Financial","team":"North America","issueType":"Development Issue","issue":"Previously, we encountered issues with categories not displaying correctly on the frontend against the awards. While that issue was fixed, we have observed that the categories are still getting delete...","detail":"Previously, we encountered issues with categories not displaying correctly on the frontend against the awards. While that issue was fixed, we have observed that the categories are still getting deleted periodically. LPL has noticed that this happens, particularly for awards (and not for categories related to badges), without anyone manually deleting them.","status":"Resolved","rawStatus":"Resolved","recurring":"","reportedDate":"","resolutionDate":"","jiraLink":"","relatedTo":"Categories & Question Wizard","assignedTo":""},{"id":163,"client":"LPL Financial","team":"North America","issueType":"Reports Issue","issue":"We are not being able to download the active emploee report from the dashboard and its giving us an timeout error. According to vishal singh its due to large amount of data but it has happened with Ma...","detail":"We are not being able to download the active emploee report from the dashboard and its giving us an timeout error. According to vishal singh its due to large amount of data but it has happened with Master award report as well previously which is now fixed, client has also faced the same error- https://vantagecirclejira.atlassian.net/browse/VC-10741","status":"Resolved","rawStatus":"Resolved","recurring":"","reportedDate":"","resolutionDate":"","jiraLink":"","relatedTo":"Active Employee Report","assignedTo":""},{"id":164,"client":"Edelman Financial Engines","team":"North America","issueType":"Development Issue","issue":"Since EFE went live the insights are not showing correctly in dashboard. And its been pending for more than 1 month","detail":"Since EFE went live the insights are not showing correctly in dashboard. And its been pending for more than 1 month","status":"Resolved","rawStatus":"Resolved","recurring":"","reportedDate":"","resolutionDate":"","jiraLink":"https://vantagecirclejira.atlassian.net/browse/VC-10458","relatedTo":"Insights in overview section in the dashboard","assignedTo":""},{"id":165,"client":"TGBS","team":"India","issueType":"Development Issue","issue":"Whenever a user tries to login, after entering the login credentials the login page reloads again","detail":"","status":"Pending","rawStatus":"Pending in Client side","recurring":"","reportedDate":"2025-02-28 00:00:00","resolutionDate":"","jiraLink":"https://vantagecirclejira.atlassian.net/browse/VC-10709","relatedTo":"Login Page reloading","assignedTo":""},{"id":166,"client":"TATA Teleservices","team":"","issueType":"Development Issue","issue":"Users are receiving LSA points twice","detail":"","status":"Resolved","rawStatus":"Resolved","recurring":"","reportedDate":"","resolutionDate":"","jiraLink":"","relatedTo":"Double allocation of LSA Points","assignedTo":""},{"id":167,"client":"MPAC","team":"","issueType":"Development Issue","issue":"It has come to my attention that MPAC doesn't have a milestone gift available for users celebrating their 3-year anniversary. However, these users are still receiving emails prompting them to redeem t...","detail":"It has come to my attention that MPAC doesn't have a milestone gift available for users celebrating their 3-year anniversary. However, these users are still receiving emails prompting them to redeem their gifts. Additionally, the milestone catalog for the 3-year anniversary has not been created on the platform yet, yet they are being sent the redemption emails. I have attached the emails for your ...","status":"Resolved","rawStatus":"Resolved","recurring":"","reportedDate":"","resolutionDate":"","jiraLink":"https://vantagecirclejira.atlassian.net/browse/VC-11051","relatedTo":"3 years Anniversary milestone email","assignedTo":""},{"id":168,"client":"CSA Group","team":"","issueType":"Development Issue","issue":"Client noticed that an anonymous user appeared in the feed yesterday, primarily in relation to birthday greetings. It seems that BRAVOCSA greeted the anonymous user.","detail":"Client noticed that an anonymous user appeared in the feed yesterday, primarily in relation to birthday greetings. It seems that BRAVOCSA greeted the anonymous user.","status":"Resolved","rawStatus":"Resolved","recurring":"","reportedDate":"","resolutionDate":"","jiraLink":"","relatedTo":"Anonymous user","assignedTo":""},{"id":169,"client":"DHL Express, Span Technologies, Perceptive, Airtel, Factset","team":"","issueType":"Reports Issue","issue":"Data Not appearing for Redemption and Active users reports on the dashboard","detail":"Data Not appearing for Redemption and Active users reports on the dashboard","status":"Resolved","rawStatus":"Resolved","recurring":"Yes","reportedDate":"","resolutionDate":"","jiraLink":"","relatedTo":"Data Not appearing for Redemption and Active users reports on the dashboard","assignedTo":""},{"id":170,"client":"Factset - Points upload\n\nIcertis - Panel Nomination","team":"","issueType":"Development Issue","issue":"Email redirection issues - Points upload and panel nomination email","detail":"The PoCs have been raising this issue that the redirection link given in the emails, which is triggered to concerned users like HR admin for approving points or to panel nominators/voters/winners selectors, is not getting redirected to the correct page or tab. Details shared with the Product team over mail several times","status":"Pending","rawStatus":"Pending in Client side","recurring":"","reportedDate":"","resolutionDate":"","jiraLink":"","relatedTo":"","assignedTo":""},{"id":171,"client":"LPL Financial","team":"","issueType":"Reports Issue","issue":"LPL has been experiencing issues when selecting the date range for the Master Award Report, specifically from March 1, 2025 \u2013 March 31, 2025. The report only displays data until March 30 and also incl...","detail":"LPL has been experiencing issues when selecting the date range for the Master Award Report, specifically from March 1, 2025 \u2013 March 31, 2025. The report only displays data until March 30 and also includes data from February 28.\n\n\nNew VC Update- It was a frontened issue and it was fixed by Bhagyajeet, awaiting on client's confirmation","status":"Pending","rawStatus":"Pending in Client side","recurring":"","reportedDate":"","resolutionDate":"","jiraLink":"","relatedTo":"Master Award Report","assignedTo":""},{"id":172,"client":"Edelman Financial Engines","team":"North America","issueType":"Reports Issue","issue":"They\u2019ve shared feedback that the new budget allocation report does not meet their requirements. They\u2019ve expressed a preference for the earlier, simpler version of the report, which included the alloca...","detail":"They\u2019ve shared feedback that the new budget allocation report does not meet their requirements. They\u2019ve expressed a preference for the earlier, simpler version of the report, which included the allocated budget, utilized budget, and remaining balance\u2014all in a single view.\nThe current format is causing confusion on their end, and they are considering escalating the issue to higher management. I wal...","status":"Resolved","rawStatus":"Resolved","recurring":"","reportedDate":"","resolutionDate":"21-05-2025","jiraLink":"","relatedTo":"Budget Allocation report","assignedTo":""},{"id":173,"client":"MPAC","team":"","issueType":"Development Issue","issue":"MPAC has the Service Yearbook feature, which is set to trigger notifications at T-28, T-14, and T-3. However, according to the client, one user's \u201cShare Your Thoughts\u201d prompt was only sent once\u2014to the...","detail":"Update from Anirban P-We see employeePoints createdAt \u2192 2025-01-20(January 20th) and processedAt = 2025-04-01(Actual DOJ in table), going by the createdAt date in points table the doj should have been 17th Feb(adding 28 days) but it is not, the DOJ is 1st April, so we assume there was a doj update in between which caused this error\n\nNew Update- The update is based on assumption and we are still aw...","status":"Resolved","rawStatus":"Resolved","recurring":"","reportedDate":"","resolutionDate":"","jiraLink":"","relatedTo":"Share your tHoughts","assignedTo":""},{"id":174,"client":"Aptean and DHL Express","team":"India","issueType":"Reports Issue","issue":"Certain columns are missing in the Employee Points Report for clients Aptean and DHL Express, including\u00a0Award Value,\u00a0Country of Recipient, and\u00a0Billing Value. These fields are essential for invoicing p...","detail":"Certain columns are missing in the Employee Points Report for clients Aptean and DHL Express, including\u00a0Award Value,\u00a0Country of Recipient, and\u00a0Billing Value. These fields are essential for invoicing purposes.","status":"Resolved","rawStatus":"Resolved","recurring":"","reportedDate":"","resolutionDate":"","jiraLink":"","relatedTo":"Employee Points Report","assignedTo":""},{"id":175,"client":"Tata Motors","team":"India","issueType":"Reports Issue","issue":"Awarding Unit in employee points got changed when we are trying to download the report now for past records from the dashboard. \nInvoice pending since August 2024","detail":"Awarding Unit in employee points got changed when we are trying to download the report now for past records from the dashboard. \nInvoice pending since August 2024","status":"Resolved","rawStatus":"Resolved","recurring":"","reportedDate":"","resolutionDate":"","jiraLink":"https://vantagecirclejira.atlassian.net/browse/VR-236","relatedTo":"Employee Points Report","assignedTo":""},{"id":176,"client":"ITC Hotels","team":"India","issueType":"Reports Issue","issue":"Discrepancy in point values for approved awards in the Award Nomination and Employee Points reports, covering the period from 1st April 2024 to 31st March 2025.","detail":"Discrepancy in point values for approved awards in the Award Nomination and Employee Points reports, covering the period from 1st April 2024 to 31st March 2025.","status":"Resolved","rawStatus":"Resolved","recurring":"","reportedDate":"2025-06-12 00:00:00","resolutionDate":"","jiraLink":"https://vantagecirclejira.atlassian.net/browse/VC-12127","relatedTo":"Award Nomination Report and Employee Points Report","assignedTo":""},{"id":177,"client":"ITC Hotels","team":"India","issueType":"Reports Issue","issue":"Receiver details for approved awards are missing from the award nomination report.","detail":"Receiver details for approved awards are missing from the award nomination report.","status":"Resolved","rawStatus":"Resolved","recurring":"","reportedDate":"2025-07-08 00:00:00","resolutionDate":"","jiraLink":"https://vantagecirclejira.atlassian.net/browse/VC-12127","relatedTo":"Award Nomination Report","assignedTo":""},{"id":178,"client":"Icertis","team":"India","issueType":"Development Issue","issue":"Work anniversary email not triggered on 8th July","detail":"","status":"Resolved","rawStatus":"Resolved","recurring":"","reportedDate":"2025-07-08 00:00:00","resolutionDate":"","jiraLink":"https://vantagecirclejira.atlassian.net/browse/VC-12492","relatedTo":"Work anniversary email not triggered on 8th July","assignedTo":""},{"id":179,"client":"Perceptive","team":"India","issueType":"Development Issue","issue":"User unable to nominate for new award- Old award showing as pending","detail":"For perceptive, users are unable to nominate for new awards- Error message showing - Previous award pending although award is successfully declined from to do list and the same is also reflecting a declined in reports. While declined, the employee points table is updated but vr_reward_order and vr_panel_approval table does not get updated accordingly.","status":"Resolved","rawStatus":"Resolved","recurring":"","reportedDate":"2025-07-08 00:00:00","resolutionDate":"","jiraLink":"https://vantagecirclejira.atlassian.net/browse/VC-12490","relatedTo":"To Do list issue","assignedTo":""},{"id":180,"client":"Visteco Technologies","team":"India","issueType":"Development Issue","issue":"Super Admin when falls in middle of approval process, the system assumes that the super admin is the final approver and the quota should be deducted from superadmin","detail":"Super Admin when falls in middle of approval process, the system assumes that the super admin is the final approver and the quota should be deducted from superadmin","status":"Resolved","rawStatus":"Resolved","recurring":"","reportedDate":"2025-07-07 00:00:00","resolutionDate":"","jiraLink":"https://vantagecirclejira.atlassian.net/browse/VC-12473","relatedTo":"Workflow Issue","assignedTo":""},{"id":181,"client":"Dijital People","team":"India","issueType":"Development Issue","issue":"When the user clicks the Experience button, they are logged out of the platform.","detail":"When the user clicks the Experience button, they are logged out of the platform.","status":"Resolved","rawStatus":"Resolved","recurring":"","reportedDate":"2025-07-15 00:00:00","resolutionDate":"","jiraLink":"","relatedTo":"Unable to access the Experience option.","assignedTo":""},{"id":182,"client":"Muthoot Group","team":"India","issueType":"Reports Issue","issue":"getting single digit redeem points where as the least redeem amount is 100 in the portal","detail":"In the \"Redeemed Points\" column, the values are appearing as 6, 51, and 50, whereas in the \"Amount\" column values are showing as 49.02, 5.1, and 5.","status":"Resolved","rawStatus":"Resolved","recurring":"","reportedDate":"2025-07-24 00:00:00","resolutionDate":"","jiraLink":"https://vantagecirclejira.atlassian.net/browse/VC-12758","relatedTo":"Points Redemption report","assignedTo":""},{"id":183,"client":"ACG","team":"India","issueType":"Reports Issue","issue":"Award Vantage points were recorded as 0, while the award values had some amounts.","detail":"Award Vantage points were recorded as 0, while the award values had some amounts.","status":"Resolved","rawStatus":"Resolved","recurring":"","reportedDate":"2025-08-07 00:00:00","resolutionDate":"","jiraLink":"","relatedTo":"Employee Points Report","assignedTo":""},{"id":184,"client":"ACG","team":"India","issueType":"Development Issue","issue":"Users points were redeemed by someone else by fraudulent means","detail":"Users points were redeemed by someone else by fraudulent means","status":"Resolved","rawStatus":"Resolved","recurring":"","reportedDate":"2025-07-03 00:00:00","resolutionDate":"","jiraLink":"","relatedTo":"Fraud Points redemption","assignedTo":""},{"id":185,"client":"Tata Motors","team":"India","issueType":"Reports Issue","issue":"In the award nomination report, the awarding unit was not showing as lsawallet@tatamotors.com but was in numbers","detail":"In the award nomination report, the awarding unit was not showing as lsawallet@tatamotors.com but was in numbers","status":"Resolved","rawStatus":"Resolved","recurring":"","reportedDate":"2025-07-27 00:00:00","resolutionDate":"","jiraLink":"https://vantagecirclejira.atlassian.net/browse/VC-12850","relatedTo":"Award nomination report","assignedTo":""},{"id":186,"client":"MBRDI","team":"India","issueType":"Reports Issue","issue":"HR who is mapped with the dept - RD/ICX is not getting the data for this dept in the employee points report.","detail":"HR who is mapped with the dept - RD/ICX is not getting the data for this dept in the employee points report.","status":"Resolved","rawStatus":"Resolved","recurring":"","reportedDate":"2025-08-25 00:00:00","resolutionDate":"","jiraLink":"","relatedTo":"Employee points report","assignedTo":""},{"id":187,"client":"Trantor","team":"India","issueType":"Development Issue","issue":"Automated Birthday, LSA email not sent and Feed not generated.","detail":"The Automated Birthday and LSA emails have repeatedly failed to send, and the feed has not been generated multiple times. The issue was first reported on March 6, 2025, and has since occurred repeatedly, being raised on several occasions. Most recently, on August 26, 2025, the client reported the problem again with high dissatisfaction. We assured them that we would monitor the situation and provi...","status":"Resolved","rawStatus":"Resolved","recurring":"Yes","reportedDate":"","resolutionDate":"","jiraLink":"https://vantagecirclejira.atlassian.net/browse/VC-13289","relatedTo":"Automated Birthday, LSA email not sent and Feed not generated.","assignedTo":""},{"id":188,"client":"Tata Motors","team":"India","issueType":"Development Issue","issue":"Duplicate accounts showing while nomination but in report only correct report shows","detail":"Duplicate accounts showing while nomination but in report only correct report shows","status":"Resolved","rawStatus":"Resolved","recurring":"","reportedDate":"9th Sept'25","resolutionDate":"","jiraLink":"","relatedTo":"Duplicate accounts showing while nomination but in report only correct report shows","assignedTo":""},{"id":189,"client":"Vitesco","team":"India","issueType":"Development Issue","issue":"App Login Discrepancy","detail":"As per the client Vitesco (Company ID: 1307), the app login was supposed to have been disabled at the time of inception (2023). \nHowever, while extracting data for the QBR presentation, it was observed that out of 1,065 users, 961 users logged in via the Android App during Jun\u201925 and Jul\u201925. The client has now escalated this as a potential security threat.","status":"Resolved","rawStatus":"Resolved","recurring":"","reportedDate":"11th Sep'25","resolutionDate":"","jiraLink":"","relatedTo":"App Login Discrepancy","assignedTo":""},{"id":190,"client":"ITC Hotels","team":"India","issueType":"Development Issue","issue":"MS Teams login issue","detail":"We have found user from ITC Hotels who logged in via MS Teams although we have no such integration for the client","status":"Resolved","rawStatus":"Resolved","recurring":"","reportedDate":"15th Sep'25","resolutionDate":"","jiraLink":"","relatedTo":"MS Teams login issue","assignedTo":""},{"id":191,"client":"BDO Rise, ITC, etc","team":"India","issueType":"Development Issue","issue":"Issue with employee status_User table:Employee Table","detail":"3 different scenarios:-A discrepancy in the employee status. \n\n1.We have observed instances where a user\u2019s status sometimes appears as Active in the user table, but no corresponding record is found in the employee table when checked in the site admin, and vice versa.\nAs a result, the active user count does not match across the two tables, which is causing issues with user login status and impactin...","status":"Resolved","rawStatus":"Resolved","recurring":"","reportedDate":"10th Sep'25","resolutionDate":"","jiraLink":"","relatedTo":"Issue with employee status_User table:Employee Table","assignedTo":""},{"id":192,"client":"Addverb","team":"India","issueType":"Development Issue","issue":"Error while editing the pending nomination","detail":"This is to highlight that when a nominator tried to edit a pending nomination, they received an error stating that the maximum limit had been reached.\nThe system currently interprets the nominator\u2019s attempt to edit the nomination as a new submission. Since there is a restriction allowing only one Sidekick Salute nomination every six months, this results in an error indicating that the maximum limi...","status":"Resolved","rawStatus":"Resolved","recurring":"","reportedDate":"17th Sep'25","resolutionDate":"","jiraLink":"VC-13488","relatedTo":"Error while editing the pending nomination","assignedTo":""},{"id":193,"client":"AccessOne,Acme Sales,Addverb,Apollo Tyres Limited,Autoliv India Pvt Ltd,Bharat Petroleum Corporation Limited,Blue Star Limited,Celebal Technologies,DHL Global Forwarding Freight Shared Services LLP,HTC Global Services Private Limited,ICICI Lombard,Kotak Mahindra Bank,L and T Technology Services,LTIMindtree,Merit Data and Technology Private Limited ,Pantaloons,Qualitest,SGS India Pvt Ltd,Tata Play,Tata Teleservices Ltd,Vitesco Technologies India Private Limited,Wipro,WPP Media,Zuno General Insurance Limited.","team":"India","issueType":"Development Issue","issue":"LSA Points Auto Trigger Missed","detail":"We have observed multiple instances where automated LSA points are frequently getting missed due to various reasons. We request your support and intervention to help streamline this process with a permanent solution to prevent such occurrences in the future.","status":"Resolved","rawStatus":"Resolved","recurring":"","reportedDate":"10th Sep'25","resolutionDate":"","jiraLink":"https://vantagecirclejira.atlassian.net/browse/VC-13450\nhttps://vantagecirclejira.atlassian.net/browse/VC-11350","relatedTo":"LSA Points Auto Trigger Missed","assignedTo":""},{"id":194,"client":"BPCL","team":"India","issueType":"Development Issue","issue":"Gift cards not approved showing in the platform.","detail":"This is for the third time the Gift cards which are not approved by BPCL are showing up in the platform. TBPCL has contractually bind selective GVs only to be shown in the platform and it was agreed with our team to have those only. Every time there is an update this selective GVs part fails. Need a fix in this.","status":"Resolved","rawStatus":"Resolved","recurring":"","reportedDate":"","resolutionDate":"","jiraLink":"","relatedTo":"Gift Cards platform","assignedTo":""},{"id":195,"client":"SGS","team":"India","issueType":"Reports Issue","issue":"The POC has reported an issue with the approval flow - in the report, the first-level approval status shows as \"approved,\" even though the first-level approver has not approved the award.","detail":"In the award nomination report configured two different approver columns -Approver 1 and Approver 2. Once the award is approved by Approver 1, the approval date and approver employee ID should be reflected in the report. However, while the status is showing as \u201cApproved,\u201d the approval date is not appearingThe report shows the status as \u201cApproved\u201d under the first-level approver column, even though ...","status":"Resolved","rawStatus":"Resolved","recurring":"","reportedDate":"2025-09-18 00:00:00","resolutionDate":"","jiraLink":"https://vantagecirclejira.atlassian.net/browse/VC-13551","relatedTo":"Award nomination report","assignedTo":""},{"id":196,"client":"Sundaram clayton","team":"India","issueType":"Reports Issue","issue":"received a case where 2 award nominations are currently pending for approval at the 1st level approver (vj@sundaramclayton.com) in the system, however the reports generated via Admin Dashboard display...","detail":"In the award nomination report configured two different approver columns -Approver 1 and Approver 2. In the report, the first-level approval status shows as \"approved,\" even though the first-level approver has not approved the award.","status":"Resolved","rawStatus":"Resolved","recurring":"","reportedDate":"2025-09-29 00:00:00","resolutionDate":"","jiraLink":"https://vantagecirclejira.atlassian.net/browse/VC-13632","relatedTo":"Award nomination report","assignedTo":""},{"id":197,"client":"Celebal Technolgies","team":"India","issueType":"Development Issue","issue":"Feed Page Appears Blank on Login","detail":"We have been receiving frequent concerns from clients regarding the issue highlighted below. Reported this to the front end team. The backend team has confirmed that the API is running smoothly on their end.\nIssue Scenario:\nClients experience this problem almost every time they log in to the Vantage page \u2014 the page appears nearly blank initially. The feed page becomes visible only after they refre...","status":"Resolved","rawStatus":"Resolved","recurring":"","reportedDate":"8th Oct'25","resolutionDate":"","jiraLink":"https://vantagecirclejira.atlassian.net/browse/VC-13716","relatedTo":"Feed Page","assignedTo":""},{"id":198,"client":"Amdocs","team":"India","issueType":"Development Issue","issue":"Missed LSA/Birthday points","detail":"We have been receiving lot of issues for missed LSA/birthday points. Some are due to wrong DOJ/DOB updated in the system however we have also observed many cases wherein the points didn't trigger even after correct dates being present in the system.","status":"Resolved","rawStatus":"Resolved","recurring":"","reportedDate":"29th Oct'25","resolutionDate":"","jiraLink":"https://vantagecirclejira.atlassian.net/browse/VC-13927","relatedTo":"Automated Points module","assignedTo":""},{"id":199,"client":"Petronash","team":"India","issueType":"Development Issue","issue":"Points redemption issue with gift card value","detail":"Users from Petronash have redeemed their points for gift cards but the gift cards value is not equivalent to the points worth. Instead they are receiving gift card value/amount equal to their points redeemed and not the points worth.","status":"Resolved","rawStatus":"Resolved","recurring":"","reportedDate":"23rd Oct'25","resolutionDate":"3rd Nov'25","jiraLink":"https://vantagecirclejira.atlassian.net/browse/VC-13875","relatedTo":"GV issue","assignedTo":""},{"id":200,"client":"MBRDI","team":"India","issueType":"Development Issue","issue":"Issue with employee status_User table:Employee Table","detail":"A discrepancy in the employee status. \n\nWe have observed instances where a user\u2019s status sometimes appears as Active in the user table, but no corresponding record is found in the employee table when checked in the site admin, and vice versa.\nAs a result, exit users have received LSA points twice worth 35K.","status":"Resolved","rawStatus":"Resolved","recurring":"","reportedDate":"26/08/25 and recurred on 06/10/25","resolutionDate":"","jiraLink":"","relatedTo":"Issue with employee status_User table:Employee Table","assignedTo":""},{"id":201,"client":"Sinyar","team":"India","issueType":"Reports Issue","issue":"","detail":"1. Wrong data reflecting in the status column. All nominations are showing as approved including the pending ones.\n2. Award value column is missing and the points column is showing the equivalent points\n3. Billing value : The values under this column should appear same as the data in EPR i.e. in USD.\n4. Approved ON_1 : In this column, email IDs are reflecting instead of dates","status":"Resolved","rawStatus":"Resolved","recurring":"","reportedDate":"27th Oct'25","resolutionDate":"","jiraLink":"https://vantagecirclejira.atlassian.net/browse/VR-339","relatedTo":"Discrepancies in the award nomination report","assignedTo":""},{"id":202,"client":"Sinyar","team":"India","issueType":"","issue":"Exit employees are reflecting in the leaderboard section","detail":"Exit employees are reflecting in the leaderboard section. As checked, those were inactive in our system but still it was reflecting in the leaderboard section.","status":"Resolved","rawStatus":"Resolved","recurring":"","reportedDate":"27th Oct'25","resolutionDate":"","jiraLink":"https://vantagecirclejira.atlassian.net/browse/VC-13890","relatedTo":"Issue with leaderboard data","assignedTo":""},{"id":203,"client":"Wipro","team":"India","issueType":"Reports Issue","issue":"For Wipro, the reports have been recently automated for the respective SPOCs of each department/awarding unit. However, upon checking, it appears that some SPOCs haven\u2019t received the reports.","detail":"For Wipro, the reports have been recently automated for the respective SPOCs of each department/awarding unit. However, upon checking, it appears that some SPOCs haven\u2019t received the reports.","status":"Resolved","rawStatus":"Resolved","recurring":"","reportedDate":"4th Nov'25","resolutionDate":"","jiraLink":"https://vantagecirclejira.atlassian.net/browse/VR-343","relatedTo":"Automated employee points reports not triggered in 1st November.","assignedTo":""},{"id":204,"client":"Celebal Technolgies","team":"India","issueType":"Development Issue","issue":"Here is a summary of the issues encountered:\nLogin error: Employees were unable to log in due to duplicate ID creation.\nUnavailable points: Balance points were removed.\nBudget: All budgets were deallo...","detail":"Here is a summary of the issues encountered:\nLogin error: Employees were unable to log in due to duplicate ID creation.\nUnavailable points: Balance points were removed.\nBudget: All budgets were deallocated.\nAwards & Badges: These got deleted.\nProfile pictures: These were removed.","status":"Resolved","rawStatus":"Resolved","recurring":"","reportedDate":"10th Oct'25","resolutionDate":"","jiraLink":"https://vantagecirclejira.atlassian.net/browse/VC-13766","relatedTo":"Issue with Celebal Employee Data_workflow revision - HRIS changes","assignedTo":""},{"id":205,"client":"Airtel & Voya India","team":"India","issueType":"Reports Issue","issue":"Amount and currency column missing and mandatory so unable to download report","detail":"While downloading the report from Dashboard POC found that the report was not downloading due to the amount and currency columns being blank.","status":"Resolved","rawStatus":"Resolved","recurring":"","reportedDate":"","resolutionDate":"","jiraLink":"","relatedTo":"Reports","assignedTo":""},{"id":206,"client":"Amdocs Management","team":"India","issueType":"Reports Issue","issue":"Award type column missing for Amdocs","detail":"","status":"Resolved","rawStatus":"Resolved","recurring":"","reportedDate":"","resolutionDate":"","jiraLink":"","relatedTo":"Reports","assignedTo":""},{"id":207,"client":"Sinyar","team":"India","issueType":"Reports Issue","issue":"Insights & Overview data not available in the dashboard","detail":"Insights & Overview data not available in the dashboard","status":"Resolved","rawStatus":"Resolved","recurring":"","reportedDate":"12th Nov","resolutionDate":"","jiraLink":"","relatedTo":"Dashboard insights","assignedTo":""},{"id":208,"client":"Infosys","team":"India","issueType":"Reports Issue","issue":"For certain set of users from hungary, who have redeemed the europe mastercard, the final biling values that are coming is quite high which is causing the mismatch as we consider the currency column f...","detail":"For certain set of users from hungary, who have redeemed the europe mastercard, the final values that are coming is quite high which is causing the mismatch as we consider the currency column for billing.","status":"Resolved","rawStatus":"Resolved","recurring":"","reportedDate":"","resolutionDate":"","jiraLink":"","relatedTo":"Redemption report","assignedTo":""},{"id":209,"client":"Celebal Technologies","team":"India","issueType":"Reports Issue","issue":"Discrepancy in the figures displayed on the Insights page when compared with reports","detail":"The client has reported that the figures captured in the report and the ones reflecting under the Insights tab has discrepancy. On checking the data from November 1 to November 30, 2025, we found out that the figures stand as below - Non-Monetary Badge\n\nAs per Appreciation Report\n\nAs per Dashboard Insights\n\nHelping Hand\n50 56\n\nGreat Work\n40 44\n\nMultitasker\n9 13\n\nPunctuality Pro\n13 13\n\nKudos\n8 11","status":"Resolved","rawStatus":"Resolved","recurring":"","reportedDate":"1st Dec'25","resolutionDate":"","jiraLink":"https://vantagecirclejira.atlassian.net/browse/VR-360","relatedTo":"Dashboard Insights Page","assignedTo":""},{"id":210,"client":"Wipro","team":"India","issueType":"Development Issue","issue":"LSA points triggered twice, one in english and another in different language","detail":"The duplicity is due to the user's language preference change during the preprocessing period, the DB check failed in the employee points table's reason column and the preprocessing started again in the user's preferred language, and we ended up having two entries in employee points table with different language in the reason column.","status":"Resolved","rawStatus":"Resolved","recurring":"","reportedDate":"","resolutionDate":"","jiraLink":"https://vantagecirclejira.atlassian.net/browse/VC-12282","relatedTo":"LSA points triggered twice","assignedTo":""},{"id":211,"client":"Wipro","team":"India","issueType":"Development Issue","issue":"There are about 48 entries where user have redeemed the points after LWD","detail":"Checked with Somir and found data is absolutely correct. still users were able to redeem.","status":"Resolved","rawStatus":"Resolved","recurring":"","reportedDate":"","resolutionDate":"","jiraLink":"https://vantagecirclejira.atlassian.net/browse/VC-14273","relatedTo":"Redemption of Points after LWD","assignedTo":""},{"id":212,"client":"Celebal Technologies","team":"India","issueType":"Reports Issue","issue":"Login report related issues","detail":"Back in November 2024, we initiated a report for the client that captured the details of those users who were yet to login to the portal. However, the client has claimed that the report shows data of users who have already logged into the portal. My preliminary investigation suggests that the client is right. The report is attached for your perusal. Please look into the issue. Why is it capturing ...","status":"Resolved","rawStatus":"Resolved","recurring":"","reportedDate":"21st of Nov '25","resolutionDate":"","jiraLink":"https://vantagecirclejira.atlassian.net/browse/VR-355","relatedTo":"Reports","assignedTo":""},{"id":213,"client":"Vantage Circle","team":"India","issueType":"Development Issue","issue":"Issue with the display of profile photo on the portal.","detail":"There is an issue with the display of profile photo on the portal. While my profile photo is already updated, I have noticed the following issues - \nMy profile picture appears when I log in via MS Teams but not visible if I use the web version\nAlthough my profile picture should already be available on the database, no profile photo is being displayed when I like or comment on any feed post","status":"Resolved","rawStatus":"Resolved","recurring":"","reportedDate":"10th of Dec '25","resolutionDate":"","jiraLink":"https://vantagecirclejira.atlassian.net/browse/VC-14331","relatedTo":"Profile photo not updated.","assignedTo":""},{"id":214,"client":"Infosys","team":"India","issueType":"Reports Issue","issue":"Request for a overall report. If not in the dashboard, then an automated report atleast on a weekly/monthly basis containing all the required fields.","detail":"Currently in the dashboard we are having separate reports for each module i.e. allocation & redemption and also balance points report is not available in the dashboard. Infosys needs a overall report in the dashboard wherein the allocation, redemption, expired points & balance points is incorporated in a single report.","status":"Pending","rawStatus":"Pending in VC side","recurring":"","reportedDate":"","resolutionDate":"","jiraLink":"","relatedTo":"Requesting for a overall report in the dashboard","assignedTo":""},{"id":215,"client":"Celebal Tech","team":"India","issueType":"Development Issue","issue":"Requesting your support in getting this corrected.","detail":"the budget and budget holder details are not appearing accurately on the front end of the dashboard under the Manager Budget Summary, although the data is correct in the backend report.\nPlease find attached the system snapshot along with the backend report for your reference. Requesting your support in getting this corrected.","status":"Resolved","rawStatus":"Resolved","recurring":"","reportedDate":"16th of Dec 2025","resolutionDate":"","jiraLink":"https://vantagecirclejira.atlassian.net/browse/VC-14399","relatedTo":"the budget and budget holder details are not appearing accurately on the front end of the dashboard","assignedTo":""},{"id":216,"client":"Amdocs-missed automated points","team":"India","issueType":"Development Issue","issue":"We have been seeing a significant number of missed cases with automated points for Amdocs, where, despite the data being correct, the automated points are not getting triggered. As a result, users rea...","detail":"We have been seeing a significant number of missed cases with automated points for Amdocs, where, despite the data being correct, the automated points are not getting triggered. As a result, users reach out to the support team, and we have to upload the points manually.","status":"Resolved","rawStatus":"Resolved","recurring":"","reportedDate":"","resolutionDate":"","jiraLink":"https://vantagecirclejira.atlassian.net/browse/VC-14478","relatedTo":"Automated points","assignedTo":""},{"id":216,"client":"Muthoot Group","team":"India","issueType":"Development Issue","issue":"CSV file is not getting uploaded and shows a \u201cNo awards found\u201d error.","detail":"While uploading the CSV points upload file, an error is displayed stating \u201cNo award found,\u201d even though all the awards have been configured on the platform.","status":"Resolved","rawStatus":"Resolved","recurring":"","reportedDate":"","resolutionDate":"","jiraLink":"https://vantagecirclejira.atlassian.net/browse/VC-14780","relatedTo":"CSV file is not getting uploaded and shows a \u201cNo awards found\u201d error.","assignedTo":""},{"id":217,"client":"BDO Rise","team":"India","issueType":"Reports Issue","issue":"Discrepancies in employee points report, award nomination report and appreciation report respectively.","detail":"Requesting you to kindly assign a relevant point of contact to take this case forward towards resolution.\n\nConcern- Discrepancies observed in the BDO Rise reports:\n\nEmployee Points Report:\nUnder the CSV Award Category, the following fields are appearing blank for a few records:\n\nEmployee ID\n\nEmployee Department\n\nEmployee City\n\nSPOC\n\nAward Nomination Status Report:\nUnder the CSV Award Category, the...","status":"Resolved","rawStatus":"Resolved","recurring":"","reportedDate":"","resolutionDate":"","jiraLink":"https://vantagecirclejira.atlassian.net/browse/VC-14744","relatedTo":"BDO Rise (994):Blank and incorrect details shown in Employee Points Report, Award Nomination and Appreciation Reports","assignedTo":""},{"id":218,"client":"Wipro","team":"India","issueType":"Development Issue","issue":"Two LSA records were created for a single user - raul.juarez@wipro.com on the same date","detail":"Two LSA records were generated by the system for a single user - raul.juarez@wipro.com on the same date","status":"Resolved","rawStatus":"Resolved","recurring":"","reportedDate":"","resolutionDate":"","jiraLink":"https://vantagecirclejira.atlassian.net/browse/VC-14797","relatedTo":"LSA duplication","assignedTo":""},{"id":219,"client":"Wipro","team":"India","issueType":"Development Issue","issue":"Wipro-LSA config for non leap year","detail":"wipro had certain employees this year whose DOJ is on 29th Feb and is eligible to receive LSA in Feb. However since this year, in feb we are having only 28 days so how will the system handle this scenario? will the LSA & SY be triggered on 28th feb or on 1st Mar.","status":"Resolved","rawStatus":"Resolved","recurring":"","reportedDate":"","resolutionDate":"","jiraLink":"https://vantagecirclejira.atlassian.net/browse/VC-14609","relatedTo":"LSA config for non leap year","assignedTo":""},{"id":220,"client":"Wipro","team":"India","issueType":"Development Issue","issue":"Five LSA records generated for one user","detail":"5 LSA records were generated for a user : sabria.achour@wipro.com as the duplicity check failed in France language.","status":"Resolved","rawStatus":"Resolved","recurring":"","reportedDate":"","resolutionDate":"","jiraLink":"https://vantagecirclejira.atlassian.net/browse/VC-14498","relatedTo":"Duplicate LSA","assignedTo":""},{"id":221,"client":"Kotak","team":"India","issueType":"Development Issue","issue":"Eligible Users not getting nomination rights","detail":"Some employees are unable to nominate for awards, even though they are already assigned to awards & have a budget, but they didn't receive the nomination rights.We checked with the support team, and they have said that only a few users are able to nominate while others are unable.","status":"Resolved","rawStatus":"Resolved","recurring":"","reportedDate":"9th Feb","resolutionDate":"","jiraLink":"https://vantagecirclejira.atlassian.net/browse/VC-14860","relatedTo":"Award Workflow","assignedTo":""},{"id":222,"client":"Airtel","team":"India","issueType":"Development Issue","issue":"Primary Key logic is not working properly this is leading to 400+ accounts getting deactivated","detail":"Airtel has been facing issue of Active employees getting deactivated whenever new data is pushed. Logic of Employee_id being primary key isn't working properly leading to escalation.","status":"Resolved","rawStatus":"Resolved","recurring":"","reportedDate":"","resolutionDate":"","jiraLink":"https://vantagecirclejira.atlassian.net/browse/VC-14796","relatedTo":"SFTP","assignedTo":""},{"id":223,"client":"LTTS","team":"India","issueType":"Development Issue","issue":"Issue with employee status_User table:Employee Table","detail":"Wedding anniversary date is not updated in user table but updated in employee table hence automated points not credited to user.","status":"Resolved","rawStatus":"Resolved","recurring":"","reportedDate":"9th Feb","resolutionDate":"","jiraLink":"https://vantagecirclejira.atlassian.net/browse/VC-14326","relatedTo":"Automated points","assignedTo":""},{"id":224,"client":"TCL","team":"India","issueType":"Development Issue","issue":"Delta changes like email id update or RM email updates are. not getting updated at our platform","detail":"Delta changes like email id update or RM email updates are. not getting updated at our platform","status":"Resolved","rawStatus":"Resolved","recurring":"","reportedDate":"","resolutionDate":"","jiraLink":"","relatedTo":"Delta changes not getting updated at our platform","assignedTo":""},{"id":225,"client":"Omron","team":"India","issueType":"Reports Issue","issue":"Incorrect information being captured in the Panel Award Nomination Report","detail":"Client Name: Omron\nCompany ID: 1775\n\nAlthough Panel Awards do not provide an option to decline nominations, the report reflects statuses such as \u201cDeclined\u201d, and in some cases, the status is marked as \u201cNA.\u201d\n\nAdditionally, the Approver Email is being treated as the Panel Voter, while the Winner Selector Name captured in the report does not belong to the panel voters.\n\n\n\nAs per Mushtaq issue has been...","status":"Resolved","rawStatus":"Resolved","recurring":"","reportedDate":"2026-10-02 00:00:00","resolutionDate":"","jiraLink":"VC-14868","relatedTo":"Panel Award","assignedTo":""},{"id":226,"client":"TML","team":"India","issueType":"Reports Issue","issue":"Issue with consolidated budget report","detail":"There are mismatches in the consolidated budget report. It has errors hence not able to rely on dashboard reports fro Tata motors","status":"Resolved","rawStatus":"Resolved","recurring":"","reportedDate":"2026-12-02 00:00:00","resolutionDate":"","jiraLink":"https://vantagecirclejira.atlassian.net/browse/VC-14891","relatedTo":"Issue with consolidated budget report","assignedTo":""},{"id":227,"client":"BDO Rise, ITC Hotels, Vitesco, Weaver, Kapitus and White River Media","team":"India","issueType":"Reports Issue","issue":"Insight and overview details are not reflecting on the dashboard","detail":"Insights and Overview details that are currently not reflecting on the dashboards for the below-mentioned companies:\n\nBDO Rise-994\n\nITC Hotels-717\n\nVitesco-1307\n\nWeaver-1811\n\nKapitus-1107\n\nWhite River Media-1674","status":"Resolved","rawStatus":"Resolved","recurring":"","reportedDate":"17/02/2026","resolutionDate":"","jiraLink":"https://vantagecirclejira.atlassian.net/browse/VC-14934","relatedTo":"Dashboard","assignedTo":""},{"id":228,"client":"Celebal Tech","team":"India","issueType":"Development Issue","issue":"Leaderboard Inaccuracy reported","detail":"The primary concern raised by the client is that the leaderboard data displayed on the platform appears to be incorrect. To validate this, we downloaded the relevant report from the Site Admin panel. However, we are unable to reconcile the data, as the figures in the PDF report do not match the data shown on the platform.","status":"Resolved","rawStatus":"Resolved","recurring":"","reportedDate":"19/02/2026","resolutionDate":"","jiraLink":"VB-228","relatedTo":"Platform","assignedTo":""},{"id":229,"client":"Wipro","team":"India","issueType":"Development Issue","issue":"Missing SY and Certificate attachments","detail":"SY and certificate attachments were missing from the LSA emails triggered to the employees who completed their milestones on 1st, 2nd, and 3rd of March 2026.","status":"Resolved","rawStatus":"Resolved","recurring":"","reportedDate":"2026-05-03 00:00:00","resolutionDate":"","jiraLink":"https://vantagecirclejira.atlassian.net/browse/VC-15196","relatedTo":"LSA","assignedTo":""},{"id":230,"client":"Airtel","team":"India","issueType":"Reports Issue","issue":"Redemption report format error","detail":"The employee codes are not appearing in Airtel\u2019s Redemption Report. This has been happening since last month. Request you to kindly check and confirm the root cause and ensure the data reflects correctly in the report. Thanks.","status":"Resolved","rawStatus":"Resolved","recurring":"","reportedDate":"2026-09-03 00:00:00","resolutionDate":"","jiraLink":"https://vantagecirclejira.atlassian.net/browse/VC-15198","relatedTo":"Reports","assignedTo":""},{"id":231,"client":"Voya India","team":"India","issueType":"Development Issue","issue":"Points Invalidation issue","detail":"User Points are being invalidated prior to their expiry.","status":"Resolved","rawStatus":"Resolved","recurring":"","reportedDate":"","resolutionDate":"","jiraLink":"https://vantagecirclejira.atlassian.net/browse/VC-10256","relatedTo":"Invalidation issue","assignedTo":""},{"id":232,"client":"Wipro","team":"India","issueType":"Development Issue","issue":"Points redemption is more than actual allocation","detail":"While working on the CN file, we identified that there were instances where users at Wipro were able to redeem points exceeding their allocated balance. A few such cases have already been identified by Somir. Requesting further review and action on this.","status":"Resolved","rawStatus":"Resolved","recurring":"","reportedDate":"","resolutionDate":"","jiraLink":"","relatedTo":"Over redemption issue","assignedTo":""},{"id":233,"client":"LTTS","team":"India","issueType":"Development Issue","issue":"Incorrect profile photo mapped to employee in ROAR portal due to duplicate name","detail":"An issue has been identified in the portal where the profile of Sanjay Jain (PS No./Employee ID: 40051689), Discipline Head \u2013 Plant Engineering Segment is displaying an incorrect photograph.\n\nThe current image shown belongs to another employee with the same name (Sanjay Jain \u2013 Architect, Digital Transformation Practices), indicating a possible mismatch due to duplicate names in the system.\n\nExpect...","status":"Resolved","rawStatus":"Resolved","recurring":"","reportedDate":"","resolutionDate":"","jiraLink":"https://vantagecirclejira.atlassian.net/browse/VC-15721","relatedTo":"Incorrect profile photo mapped to employee in ROAR portal due to duplicate name","assignedTo":""},{"id":234,"client":"Infosys","team":"India","issueType":"Development Issue","issue":"Infosys-incorrect points reflecting in points statement","detail":"There is an issue reported with an employee\u2019s points statement, where the balance points were reflecting incorrectly.\n\nUpon checking, the backend data appears to be correct. During the discussion, the client has confirmed that the points are now displaying correctly at the user's end. However, they highlighted that on 2nd March, the user had observed a different balance in the points statement in ...","status":"Resolved","rawStatus":"Resolved","recurring":"","reportedDate":"","resolutionDate":"","jiraLink":"https://vantagecirclejira.atlassian.net/browse/VC-15802","relatedTo":"Infosys-incorrect points reflecting in points statement","assignedTo":""},{"id":235,"client":"CBI","team":"India","issueType":"Development Issue","issue":"all emp accounts got deactivated","detail":"Due to a wrong code push, the entire employees base of CBI got deactivated. A file named \"absent_on_file_HR_RandR_28042026.csv.pgp\" was pushed on 28th April from which all employee accounts were deactivated","status":"Resolved","rawStatus":"Resolved","recurring":"","reportedDate":"","resolutionDate":"","jiraLink":"","relatedTo":"all emp accounts got deactivated","assignedTo":""},{"id":236,"client":"TML","team":"India","issueType":"Reports Issue","issue":"Budget report issue","detail":"for tata motors, comp id 443, the budget utilisation or allocation report is not correct if downloaded from dashboard or taken manually from the team. The issue arises when the date range is specified but for Tata motors, there is a quarterly exercise of deallocation of the entire budget from all managers and fresh allocation on a specific date as per client.\n\nNow after every quarter whenever the ...","status":"Pending","rawStatus":"Pending in VC side","recurring":"","reportedDate":"","resolutionDate":"","jiraLink":"https://vantagecirclejira.atlassian.net/browse/VC-15932","relatedTo":"Budget report issue","assignedTo":""},{"id":237,"client":"ACG","team":"India","issueType":"Development Issue","issue":"Employee details update in both user table and employee table","detail":"Recurring issue of both tables not in sync due to which ACG user was unable to login, Manually the user details were synced by Gyan but the issue lies for other users","status":"Pending","rawStatus":"Pending in VC side","recurring":"Yes","reportedDate":"Over email issue reported on 28 april'26","resolutionDate":"","jiraLink":"","relatedTo":"Employee details update in both user table and employee table","assignedTo":""},{"id":238,"client":"Petronash","team":"India","issueType":"Development Issue","issue":"The points awarded to Petronash employees through their internal tool are transferred to our portal via the existing API integration. However, the client has highlighted that the allocated points are ...","detail":"The points awarded to Petronash employees through their internal tool are transferred to our portal via the existing API integration. However, the client has highlighted that the allocated points are not reflecting in their wallets.","status":"Resolved","rawStatus":"Resolved","recurring":"","reportedDate":"","resolutionDate":"","jiraLink":"https://vantagecirclejira.atlassian.net/browse/VC-16099","relatedTo":"Petronash-API points transfer issue","assignedTo":""},{"id":239,"client":"Wipro","team":"India","issueType":"Development Issue","issue":"LSA duplication due to language issue","detail":"This duplication issue is related to the language issue.\nThis issue was identified last year itself, and despite multiple fixes being deployed, the same issue continues to occur.","status":"Pending","rawStatus":"Pending in VC side","recurring":"","reportedDate":"","resolutionDate":"","jiraLink":"https://vantagecirclejira.atlassian.net/browse/VC-16110","relatedTo":"Wipro-duplicate LSA","assignedTo":""},{"id":240,"client":"Infosys","team":"India","issueType":"Development Issue","issue":"Infosys-used gift cards have been issued for 410 points for Master Card Prepaid","detail":"Used gift cards for 410 points for Master Card Prepaid has been received by a user upon redeeming 410 points from the portal. The details with screenshots have already been shared by the user in the email with subject - \"Escalation: Seeking urgent support- Used cards have been issued for 410 points redeemed in Vantage Circle App for Master Card Prepaid.\"","status":"Pending","rawStatus":"Pending in VC side","recurring":"","reportedDate":"","resolutionDate":"","jiraLink":"https://vantagecirclejira.atlassian.net/browse/VC-16101","relatedTo":"Infosys-used gift cards have been issued for 410 points for Master Card Prepaid","assignedTo":""},{"id":241,"client":"Wasael Property Management","team":"India","issueType":"Reports Issue","issue":"Unable to fetch the panel report","detail":"The panel report is not getting generated from the dashboard and its throwing an error \"Error undefined\". The error screenshot and details have been already shared yesterday in the reports issue group","status":"Resolved","rawStatus":"Resolved","recurring":"","reportedDate":"","resolutionDate":"","jiraLink":"","relatedTo":"Unable to fetch the panel report","assignedTo":""}];
+
+// STATS
+function buildStats() {
+  const total = DATA.length;
+  const resolved = DATA.filter(d => d.status === 'Resolved').length;
+  const pending = total - resolved;
+  const recurring = DATA.filter(d => d.recurring && d.recurring.toLowerCase() === 'yes').length;
+  const clients = new Set(DATA.map(d=>d.client).filter(Boolean)).size;
+  const dev = DATA.filter(d => d.issueType === 'Development Issue').length;
+  const rep = DATA.filter(d => d.issueType === 'Reports Issue').length;
+  const rate = Math.round((resolved/total)*100);
+
+  const cards = [
+    { num: total, label: 'Total Issues', accent: '#1d4ed8' },
+    { num: resolved, label: 'Resolved', accent: '#0d7a5f' },
+    { num: pending, label: 'Pending', accent: '#b45309' },
+    { num: clients, label: 'Clients', accent: '#5b21b6' },
+    { num: dev, label: 'Dev Issues', accent: '#1d4ed8' },
+    { num: rep, label: 'Report Issues', accent: '#5b21b6' },
+    { num: recurring, label: 'Recurring', accent: '#c1270d' },
+    { num: rate + '%', label: 'Resolution Rate', accent: '#0d7a5f' },
+  ];
+  document.getElementById('statsGrid').innerHTML = cards.map(c => `
+    <div class="stat-card" style="--card-accent:${c.accent}">
+      <div class="stat-num">${c.num}</div>
+      <div class="stat-label">${c.label}</div>
+    </div>`).join('');
+}
+
+// DONUT
+function buildDonut() {
+  const resolved = DATA.filter(d => d.status === 'Resolved').length;
+  const pending = DATA.length - resolved;
+  const total = DATA.length;
+  const r = 44, cx = 65, cy = 65, sw = 11;
+  const circ = 2*Math.PI*r;
+  const rPct = resolved/total, pPct = pending/total;
+
+  const arc = (offset, pct, color) => {
+    const dash = pct*circ, gap = circ-dash;
+    return `<circle cx="${cx}" cy="${cy}" r="${r}" fill="none" stroke="${color}" stroke-width="${sw}" stroke-dasharray="${dash} ${gap}" stroke-dashoffset="${-offset*circ}" stroke-linecap="butt" transform="rotate(-90 ${cx} ${cy})"/>`;
+  };
+
+  const svg = `
+    <circle cx="${cx}" cy="${cy}" r="${r}" fill="none" stroke="#e4e7ed" stroke-width="${sw}"/>
+    ${arc(0, rPct, '#0d7a5f')}
+    ${arc(rPct, pPct, '#b45309')}
+    <text x="${cx}" y="${cy-5}" text-anchor="middle" fill="#111827" font-size="18" font-weight="700" font-family="Plus Jakarta Sans">${Math.round(rPct*100)}%</text>
+    <text x="${cx}" y="${cy+12}" text-anchor="middle" fill="#9ca3af" font-size="9" font-family="Plus Jakarta Sans">resolved</text>
+  `;
+  document.getElementById('donutSvg').innerHTML = svg;
+  document.getElementById('donutLegend').innerHTML = [
+    { label:'Resolved', val:resolved, pct:Math.round(rPct*100), color:'#0d7a5f', bg:'#edfaf5' },
+    { label:'Pending',  val:pending,  pct:Math.round(pPct*100), color:'#b45309', bg:'#fef9ec' },
+  ].map(p=>`
+    <div class="legend-item">
+      <div class="legend-dot" style="background:${p.color}"></div>
+      <span class="legend-label">${p.label}</span>
+      <span class="legend-val">${p.val}</span>
+      <span class="legend-pct">${p.pct}%</span>
+    </div>`).join('');
+}
+
+// BAR CHARTS
+function buildBars(id, items, color) {
+  const max = Math.max(...items.map(d=>d.val));
+  document.getElementById(id).innerHTML = items.map(d=>`
+    <div class="bar-row" onclick="jumpToFilter('${d.fk}','${escH(d.label)}')">
+      <div class="bar-label" title="${escH(d.label)}">${escH(d.label)}</div>
+      <div class="bar-track"><div class="bar-fill" style="width:${(d.val/max)*100}%;background:${d.color||color||'var(--accent)'}"></div></div>
+      <div class="bar-val">${d.val}</div>
+    </div>`).join('');
+}
+
+function buildCharts() {
+  buildDonut();
+
+  const typeC = {};
+  DATA.forEach(d=>{ if(d.issueType) typeC[d.issueType]=(typeC[d.issueType]||0)+1; });
+  buildBars('typeChart', Object.entries(typeC).map(([k,v])=>({ label:k, val:v, color:k.includes('Dev')?'#1d4ed8':'#5b21b6', fk:'issueType' })));
+
+  const teamC = {};
+  DATA.forEach(d=>{ if(d.team) teamC[d.team]=(teamC[d.team]||0)+1; });
+  buildBars('teamChart', Object.entries(teamC).sort((a,b)=>b[1]-a[1]).map(([k,v])=>({ label:k, val:v, color:'#1d4ed8', fk:'team' })));
+
+  const cC = {};
+  DATA.forEach(d=>{ if(d.client) cC[d.client]=(cC[d.client]||0)+1; });
+  const top10 = Object.entries(cC).sort((a,b)=>b[1]-a[1]).slice(0,10);
+  buildBars('clientChart', top10.map(([k,v])=>({ label:k, val:v, color:'#5b21b6', fk:'client' })));
+
+  const rC = {};
+  DATA.forEach(d=>{ if(d.relatedTo && d.relatedTo.length<60) rC[d.relatedTo]=(rC[d.relatedTo]||0)+1; });
+  const top15 = Object.entries(rC).sort((a,b)=>b[1]-a[1]).slice(0,15);
+  buildBars('relatedChart', top15.map(([k,v])=>({ label:k, val:v, color:'#0d7a5f', fk:'relatedTo' })));
+}
+
+function jumpToFilter(key, val) {
+  switchTab('issues');
+  if (key==='issueType') document.getElementById('filterType').value=val;
+  else if (key==='team') document.getElementById('filterTeam').value=val;
+  else if (key==='status') document.getElementById('filterStatus').value=val;
+  else { document.getElementById('searchBox').value=val; }
+  applyFilters();
+}
+
+// FILTER + TABLE
+let filteredData=[...DATA], sortKey='id', sortDir=1;
+
+function applyFilters() {
+  const status=document.getElementById('filterStatus').value;
+  const type=document.getElementById('filterType').value;
+  const team=document.getElementById('filterTeam').value;
+  const rec=document.getElementById('filterRecurring').value;
+  const q=document.getElementById('searchBox').value.toLowerCase();
+
+  filteredData=DATA.filter(d=>{
+    if(status && d.status!==status) return false;
+    if(type && d.issueType!==type) return false;
+    if(team && d.team!==team) return false;
+    if(rec && d.recurring.toLowerCase()!==rec.toLowerCase()) return false;
+    if(q){
+      const hay=(d.client+' '+d.issue+' '+d.relatedTo+' '+d.detail+' '+d.issueType).toLowerCase();
+      if(!hay.includes(q)) return false;
+    }
+    return true;
+  });
+
+  document.getElementById('issueTabCount').textContent = filteredData.length;
+  renderTable();
+}
+
+function sortTable(key) {
+  if(sortKey===key) sortDir*=-1; else { sortKey=key; sortDir=1; }
+  document.querySelectorAll('thead th').forEach(t=>t.classList.remove('sorted'));
+  renderTable();
+}
+
+function renderTable() {
+  const sorted=[...filteredData].sort((a,b)=>{
+    const av=a[sortKey]||'', bv=b[sortKey]||'';
+    if(sortKey==='id') return (Number(av)-Number(bv))*sortDir;
+    return av.toString().localeCompare(bv.toString())*sortDir;
+  });
+
+  document.getElementById('resultsCount').innerHTML=`Showing <strong>${sorted.length}</strong> of <strong>${DATA.length}</strong> records`;
+
+  const tbody=document.getElementById('issuesTbody');
+  if(!sorted.length){
+    tbody.innerHTML=`<tr><td colspan="7"><div class="empty-state"><div style="font-size:2rem">🔍</div><p>No issues match your current filters.</p></div></td></tr>`;
+    return;
+  }
+  tbody.innerHTML=sorted.map(d=>`
+    <tr onclick="openModal(${d.id})">
+      <td class="id-cell">${d.id}</td>
+      <td class="client-cell">${escH(d.client)}</td>
+      <td>${d.team?escH(d.team):'<span style="color:var(--text4)">—</span>'}</td>
+      <td><span class="badge ${d.issueType.includes('Dev')?'badge-dev':'badge-report'}">${d.issueType.includes('Dev')?'Dev':'Reports'}</span></td>
+      <td class="issue-cell">${escH(d.issue||'—')}</td>
+      <td><span class="badge badge-${d.status.toLowerCase()}"><span class="badge-dot" style="background:currentColor;opacity:0.7"></span>${d.status}</span></td>
+      <td>${d.recurring.toLowerCase()==='yes'?'<span class="badge badge-recurring">Recurring</span>':'<span style="color:var(--text4)">—</span>'}</td>
+    </tr>`).join('');
+}
+
+// MODAL
+function openModal(id) {
+  const d=DATA.find(x=>x.id===id); if(!d) return;
+  document.getElementById('modalBody').innerHTML=`
+    <div class="modal-eyebrow">Issue #${d.id}</div>
+    <div class="modal-title">${escH(d.issue||'No title')}</div>
+    <div class="modal-badges">
+      <span class="badge ${d.issueType.includes('Dev')?'badge-dev':'badge-report'}">${d.issueType}</span>
+      <span class="badge badge-${d.status.toLowerCase()}"><span class="badge-dot" style="background:currentColor;opacity:0.7"></span>${d.status}</span>
+      ${d.recurring.toLowerCase()==='yes'?'<span class="badge badge-recurring">Recurring</span>':''}
+    </div>
+    <div class="modal-meta">
+      <div class="meta-field"><label>Client</label><p>${escH(d.client||'—')}</p></div>
+      <div class="meta-field"><label>Team</label><p>${escH(d.team||'—')}</p></div>
+      <div class="meta-field"><label>Reported</label><p>${escH(d.reportedDate||'—')}</p></div>
+      <div class="meta-field"><label>Resolution Date</label><p>${escH(d.resolutionDate||'—')}</p></div>
+      ${d.assignedTo?`<div class="meta-field"><label>Assigned To</label><p>${escH(d.assignedTo)}</p></div>`:''}
+      ${d.relatedTo?`<div class="meta-field"><label>Related To</label><p>${escH(d.relatedTo)}</p></div>`:''}
+    </div>
+    ${d.detail?`<div class="detail-block"><label>Issue Details</label><p>${escH(d.detail)}</p></div>`:''}
+    ${d.rawStatus&&d.rawStatus!==d.status&&d.rawStatus.length>10?`<div class="detail-block"><label>Status Note</label><p>${escH(d.rawStatus.substring(0,500))}${d.rawStatus.length>500?'…':''}</p></div>`:''}
+    ${d.jiraLink?`<a class="jira-btn" href="${escH(d.jiraLink)}" target="_blank" rel="noopener">🔗 View Jira Ticket</a>`:''}
+  `;
+  document.getElementById('modalOverlay').classList.add('open');
+  document.body.style.overflow='hidden';
+}
+
+function closeModal(e) {
+  if(e&&e.target!==document.getElementById('modalOverlay')) return;
+  document.getElementById('modalOverlay').classList.remove('open');
+  document.body.style.overflow='';
+}
+document.addEventListener('keydown',e=>{ if(e.key==='Escape') closeModal(null); });
+
+// CLIENT LIST
+function renderClientList() {
+  const q=(document.getElementById('clientSearch').value||'').toLowerCase();
+  const cC={}, cI={};
+  DATA.forEach(d=>{
+    if(!d.client) return;
+    cC[d.client]=(cC[d.client]||0)+1;
+    if(!cI[d.client]) cI[d.client]=[];
+    cI[d.client].push(d);
+  });
+  const sorted=Object.entries(cC).filter(([k])=>!q||k.toLowerCase().includes(q)).sort((a,b)=>b[1]-a[1]);
+  const el=document.getElementById('clientList');
+  if(!sorted.length){ el.innerHTML='<p class="empty-state">No clients found</p>'; return; }
+  el.innerHTML=sorted.map(([client,count])=>{
+    const issues=cI[client];
+    const resolved=issues.filter(d=>d.status==='Resolved').length;
+    const pending=issues.filter(d=>d.status==='Pending').length;
+    const recurring=issues.filter(d=>d.recurring.toLowerCase()==='yes').length;
+    const pct=Math.round((resolved/count)*100);
+    const team=[...new Set(issues.map(d=>d.team).filter(Boolean))].join(', ')||'—';
+    const barColor=pct>=80?'#0d7a5f':pct>=50?'#b45309':'#c1270d';
+    return `
+      <div class="client-card" onclick="filterByClient('${escH(client)}')">
+        <div class="client-name">${escH(client)}</div>
+        <div class="client-team">${team}</div>
+        <div class="client-stats">
+          <div class="c-stat"><div class="c-stat-num">${count}</div><div class="c-stat-lbl">Total</div></div>
+          <div class="c-stat"><div class="c-stat-num" style="color:#0d7a5f">${resolved}</div><div class="c-stat-lbl">Resolved</div></div>
+          ${pending>0?`<div class="c-stat"><div class="c-stat-num" style="color:#b45309">${pending}</div><div class="c-stat-lbl">Pending</div></div>`:''}
+          ${recurring>0?`<div class="c-stat"><div class="c-stat-num" style="color:#c1270d">${recurring}</div><div class="c-stat-lbl">Recurring</div></div>`:''}
+          <div class="c-stat" style="margin-left:auto"><div class="c-stat-num" style="color:${barColor}">${pct}%</div><div class="c-stat-lbl">Rate</div></div>
+        </div>
+        <div class="progress-bar-bg"><div class="progress-bar-fill" style="width:${pct}%;background:${barColor}"></div></div>
+      </div>`;
+  }).join('');
+}
+
+function filterByClient(client) {
+  switchTab('issues');
+  document.getElementById('searchBox').value=client;
+  applyFilters();
+}
+
+// TAB
+function switchTab(name) {
+  ['overview','issues','clients'].forEach((n,i)=>{
+    document.querySelectorAll('.tab')[i].classList.toggle('active',n===name);
+    document.querySelectorAll('.nav-pill')[i].classList.toggle('active',n===name);
+    document.getElementById('tab-'+n).classList.toggle('active',n===name);
+  });
+}
+
+function escH(s){ return String(s||'').replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;').replace(/"/g,'&quot;'); }
+
+// INIT
+buildStats();
+buildCharts();
+applyFilters();
+renderClientList();
+</script>
+</body>
+</html>
